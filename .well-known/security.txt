@@ -1,0 +1,5 @@
+Contact: mailto:sarshijkarn333@gmail.com
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://sarshijkarn.com.np/.well-known/security.txt
+

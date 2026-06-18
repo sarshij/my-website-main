@@ -1,0 +1,1 @@
+node config/update-version.js && git add index.html
