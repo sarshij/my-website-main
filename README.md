@@ -323,6 +323,10 @@ npm install
 
 **Dependencies installed:**
 
+- `vite` - Next-generation frontend tooling
+- `three` - 3D library for WebGL background
+- `lenis` - Buttery smooth scrolling
+- `gsap` - Professional-grade animations
 - `axios` - HTTP client for Resend/Discord
 - `tailwindcss` - CSS framework
 
@@ -408,10 +412,10 @@ Open `index.html` → **Line 1269**:
 #### **Local Development:**
 
 ```bash
-vercel dev
+npm run dev
 ```
 
-Visit: `http://localhost:3000`
+Visit: `http://localhost:3000` (Vite will start a local dev server with Hot Module Replacement).
 
 #### **Production Deployment:**
 
@@ -472,6 +476,8 @@ _Electronics Engineer • AI Enthusiast • Cybersecurity Explorer_
 ### **Technologies Powered By**
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite">
+  <img src="https://img.shields.io/badge/ThreeJs-black?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js">
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
   <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare">
   <img src="https://img.shields.io/badge/Resend-000000?style=for-the-badge&logo=resend&logoColor=white" alt="Resend">
@@ -486,6 +492,7 @@ _Electronics Engineer • AI Enthusiast • Cybersecurity Explorer_
 
 <img src="https://komarev.com/ghpvc/?username=sarshij&label=Profile%20Views&color=8a2be2&style=flat-square" alt="Profile Views">
 
+**Built by SARSHIJ KARN**  
 **Made with 💜 by [Sarshij Karn](https://sarshijkarn.com.np)**  
 _Building the future, one commit at a time._
 

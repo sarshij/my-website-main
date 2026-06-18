@@ -1,0 +1,918 @@
+/* ==========================================================
+   glassmorphism.css - Custom site styles
+   Handles: sidebar, hamburger, theme toggle, layout, skip-link
+   This file is safe from Tailwind recompilation purges.
+   ========================================================== */
+
+/* ---- CSS Variables ---- */
+:root {
+  --cyber-glass:         rgba(15, 15, 20, 0.72);
+  --cyber-glass-light:   rgba(255, 255, 255, 0.05);
+  --cyber-border:        rgba(0, 206, 209, 0.3);
+  --primary-color:       #8a2be2;
+  --secondary-color:     #00ced1;
+  --sidebar-width:       280px;
+  --sidebar-bg-dark:     #0f0f13;
+  --sidebar-bg-light:    #ffffff;
+  --sidebar-border-dark: rgba(138, 43, 226, 0.2);
+  --sidebar-border-light: rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Accessibility: Skip to main content link ----
+   Visually hidden but reachable via keyboard (Tab).
+   When focused, it appears for keyboard users. */
+.skip-link {
+  position: absolute;
+  top: -100px;          /* Hidden off-screen by default */
+  left: 0;
+  z-index: 99999;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+  transition: top 0.3s ease;
+}
+.skip-link:focus {
+  top: 0;               /* Reveal when keyboard-focused */
+}
+
+/* ---- Glassmorphism Panels ---- */
+.glass-panel {
+  background: var(--cyber-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--cyber-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 0.75rem;
+}
+
+.glass-panel-light {
+  background: var(--cyber-glass-light);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+/* ---- Base: Let ThreeJS background show ---- */
+html {
+  background: #05050A;
+}
+body {
+  background: transparent !important;
+  color: #fff;
+}
+
+/* ---- WebGL Canvas ---- */
+#webgl-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -20;
+  pointer-events: none;
+}
+
+/* ==========================================================
+   SIDEBAR LAYOUT
+   ========================================================== */
+
+/* On large screens (≥1024px), push body right to clear sidebar */
+@media (min-width: 1024px) {
+  body {
+    padding-left: var(--sidebar-width);
+  }
+}
+
+/* ---- Sidebar container ---- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+
+  /* Glassmorphism background */
+  background: var(--cyber-glass) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--cyber-border);
+
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+
+  /* ---- KEY FIX: Sidebar scrolls its OWN content ----
+     overflow-y: auto  → enables scroll inside sidebar
+     overscroll-behavior: contain → prevents scroll from
+     bleeding out to the main body (works with Lenis too). */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  /* Smooth slide-in/out on mobile */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+
+  /* Thin custom scrollbar for sidebar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) transparent;
+}
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+  border-radius: 10px;
+}
+
+/* Light theme sidebar */
+.light .sidebar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-right: 1px solid var(--sidebar-border-light);
+  box-shadow: 5px 0 30px rgba(0, 0, 0, 0.05);
+}
+
+/* ---- Sidebar Header ---- */
+.sidebar-header {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0; /* Don't compress the header */
+}
+.light .sidebar-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ---- Profile Container (avatar + SVG rings) ---- */
+.sidebar-profile-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 1rem;
+}
+.sidebar-avatar-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.sidebar-hologram-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(138, 43, 226, 0.5);
+  transition: all 0.4s ease;
+}
+.avatar-scanline {
+  position: absolute;
+  top: -10%;
+  left: 0;
+  width: 100%;
+  height: 20%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 206, 209, 0.2), transparent);
+  animation: sidebarAvatarScan 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes sidebarAvatarScan {
+  0%   { top: -20%; }
+  100% { top: 110%; }
+}
+.sidebar-hud-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  pointer-events: none;
+}
+.hud-ring.inner-ring {
+  animation: rotateRing 8s linear infinite;
+}
+.hud-ring.outer-ring {
+  animation: rotateRing 12s linear infinite reverse;
+}
+@keyframes rotateRing {
+  from { transform: rotate(0deg);   transform-origin: center; }
+  to   { transform: rotate(360deg); transform-origin: center; }
+}
+.sidebar-profile-container:hover .sidebar-hologram-avatar {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 20px rgba(0, 206, 209, 0.5);
+}
+
+/* Status dot (green pulsing) */
+.sidebar-status-dot {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 15px;
+  height: 15px;
+  background: #00ff88;
+  border-radius: 50%;
+  border: 2px solid var(--sidebar-bg-dark);
+  box-shadow: 0 0 10px #00ff88;
+  animation: pulseStatus 2s infinite;
+}
+.light .sidebar-status-dot {
+  border-color: var(--sidebar-bg-light);
+}
+@keyframes pulseStatus {
+  0%   { box-shadow: 0 0 0 0    rgba(0, 255, 136, 0.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);   }
+  100% { box-shadow: 0 0 0 0    rgba(0, 255, 136, 0);   }
+}
+
+/* ---- Brand name & role ---- */
+.sidebar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.brand-text {
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-dot {
+  color: #ff6f61;
+}
+.sidebar-role {
+  font-size: 0.78rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ---- Navigation list ---- */
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 0;
+  /* Overflow handled by parent .sidebar; don't add overflow here */
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-menu li {
+  margin-bottom: 0.25rem;
+}
+.sidebar-menu .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 2rem;
+  color: rgba(200, 200, 220, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+}
+.light .sidebar-menu .nav-link {
+  color: #555;
+}
+.sidebar-menu .nav-link i {
+  width: 25px;
+  font-size: 1.1rem;
+  margin-right: 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.sidebar-menu .nav-link:hover,
+.sidebar-menu .nav-link.active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(138, 43, 226, 0.15), transparent);
+  border-left-color: var(--primary-color);
+}
+.light .sidebar-menu .nav-link:hover,
+.light .sidebar-menu .nav-link.active {
+  color: var(--primary-color);
+  background: linear-gradient(90deg, rgba(138, 43, 226, 0.08), transparent);
+}
+.sidebar-menu .nav-link:hover i,
+.sidebar-menu .nav-link.active i {
+  color: var(--secondary-color);
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 8px var(--secondary-color));
+}
+
+/* ---- Sidebar Footer ---- */
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  flex-shrink: 0;
+}
+.light .sidebar-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+.sidebar-copyright {
+  font-size: 0.7rem;
+  color: #a0a0a0;
+  margin-top: 1rem;
+}
+
+/* ==========================================================
+   HAMBURGER TOGGLE BUTTON (mobile only)
+   ========================================================== */
+.hamburger-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2000;
+
+  /* Glassmorphism button */
+  background: rgba(10, 10, 20, 0.85);
+  border: 1px solid rgba(138, 43, 226, 0.6);
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* Size & flex */
+  width: 46px;
+  height: 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3);
+}
+.hamburger-btn:hover {
+  border-color: var(--secondary-color);
+  box-shadow: 0 4px 20px rgba(0, 206, 209, 0.4);
+  transform: scale(1.05);
+}
+.light .hamburger-btn {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide hamburger on desktop – sidebar is always visible */
+@media (min-width: 1024px) {
+  .hamburger-btn {
+    display: none !important;
+  }
+}
+
+/* Three horizontal lines */
+.hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+  border-radius: 3px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+.light .hamburger-line {
+  background: #333;
+}
+
+/* Active state: animate into ✕ */
+.hamburger-btn.active .hamburger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger-btn.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.active .hamburger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ==========================================================
+   MOBILE SIDEBAR: slide in from left on small screens
+   ========================================================== */
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 270px;
+  }
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  /* Dimmed backdrop when sidebar is open */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 900;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.35s ease;
+    cursor: pointer;
+  }
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* ==========================================================
+   THEME TOGGLE (sun/moon pill inside sidebar header)
+   ========================================================== */
+.theme-toggle {
+  position: relative;
+  width: 60px;
+  height: 30px;
+  background: rgba(138, 43, 226, 0.2);
+  border: 2px solid rgba(138, 43, 226, 0.4);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  margin-top: 1rem;
+  /* Remove default button padding */
+  padding: 0;
+}
+.theme-toggle:hover {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 15px rgba(0, 206, 209, 0.4);
+}
+
+/* Sliding knob */
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-radius: 50%;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.5);
+}
+/* Move knob to the right in light (active) mode */
+.theme-toggle.active::before {
+  transform: translateX(30px);
+}
+
+/* Icons inside toggle */
+.toggle-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+}
+
+/* Moon icon (default - dark mode) */
+.moon-icon {
+  color: var(--secondary-color);
+  font-size: 0.8rem;
+  position: absolute;
+  right: 6px;
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.3s ease;
+}
+/* Sun icon (shown in light mode) */
+.sun-icon {
+  color: #ffd600;
+  font-size: 0.8rem;
+  position: absolute;
+  left: 6px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s ease;
+}
+
+/* In light mode: show sun, hide moon */
+.light .sun-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+.light .moon-icon {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+/* ==========================================================
+   NAV LINKS (shared between sidebar menu and any nav)
+   ========================================================== */
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-link.active {
+  color: var(--secondary-color);
+}
+.nav-link:hover {
+  color: #fff;
+}
+
+/* ==========================================================
+   HERO SECTION LAYOUT
+   ========================================================== */
+.hero-content-left {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+.hero-image-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100vh;
+  z-index: 1;
+  overflow: hidden;
+}
+.full-body-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.hero-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Mobile hero layout */
+@media (max-width: 1023px) {
+  .hero-image-right {
+    width: 100%;
+    right: 0;
+    left: 0;
+  }
+  .full-body-img {
+    object-position: 70% top;
+  }
+  .hero-content-left {
+    width: 100%;
+    height: 100vh;
+    padding: 0 1.5rem 15vh;
+    justify-content: flex-end;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .hero-title {
+    font-size: clamp(2.2rem, 10vw, 3.2rem) !important;
+    text-shadow:
+      0 0 20px rgba(0, 0, 0, 0.9),
+      0 0 40px rgba(255, 214, 0, 0.4);
+    letter-spacing: -1px;
+    line-height: 1.3 !important;
+  }
+}
+
+/* ==========================================================
+   SECTION SCROLL MARGIN (so anchor links don't hide under sidebar)
+   ========================================================== */
+section {
+  scroll-margin-top: 60px;
+}
+
+/* ==========================================================
+   SCROLL PROGRESS BAR
+   A thin gradient line that grows across the top of the viewport
+   as the user scrolls down the page.
+   Driven by JS: document.documentElement.style.setProperty('--scroll-pct','X%')
+   ========================================================== */
+:root {
+  --scroll-pct: 0%;
+}
+
+/* Fixed bar — always on top of everything */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--scroll-pct);
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--secondary-color),
+    #ffd600
+  );
+  z-index: 99999;
+  pointer-events: none;
+  /* Smooth the bar as it fills */
+  transition: width 0.1s linear;
+  box-shadow: 0 0 10px var(--secondary-color), 0 0 20px rgba(0, 206, 209, 0.4);
+}
+
+/* ==========================================================
+   CUSTOM CURSOR GLOW (desktop only)
+   A small glowing circle that follows the mouse.
+   The cursor itself uses a dot + ring combo.
+   ========================================================== */
+@media (pointer: fine) {
+  /* Hide native cursor */
+  html, body, a, button, [role="button"], [tabindex] {
+    cursor: none !important;
+  }
+
+  /* Outer ring — lags slightly for trail effect */
+  #cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    width: 36px; height: 36px;
+    border: 2px solid rgba(0, 206, 209, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease, width 0.25s ease, height 0.25s ease, opacity 0.3s ease;
+    will-change: transform;
+  }
+
+  /* Inner dot — snaps to cursor */
+  #cursor-dot {
+    position: fixed;
+    top: 0; left: 0;
+    width: 8px; height: 8px;
+    background: var(--secondary-color);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px var(--secondary-color), 0 0 20px rgba(0, 206, 209, 0.5);
+    will-change: transform;
+    /* Snaps instantly — no transition */
+  }
+
+  /* Hover state: ring expands on interactive elements */
+  #cursor-ring.hovering {
+    width: 56px;
+    height: 56px;
+    border-color: var(--primary-color);
+    background: rgba(138, 43, 226, 0.08);
+  }
+  #cursor-dot.hovering {
+    background: var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color);
+  }
+
+  /* Click state: brief pulse */
+  #cursor-ring.clicking {
+    width: 24px;
+    height: 24px;
+    border-color: #ffd600;
+    transition: width 0.08s ease, height 0.08s ease;
+  }
+}
+
+/* ==========================================================
+   HERO — MOBILE GRADIENT OVERLAY
+   Adds a bottom-to-center dark gradient so text is always
+   readable even on bright parts of the full-body hero image.
+   ========================================================== */
+@media (max-width: 1023px) {
+  /* Gradient from bottom (where text lives) to transparent top */
+  #home::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(
+      to top,
+      rgba(5, 5, 10, 0.92) 0%,
+      rgba(5, 5, 10, 0.6)  40%,
+      transparent          100%
+    );
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Ensure hero text sits above the overlay */
+  .hero-content-left {
+    z-index: 10;
+  }
+}
+
+/* ==========================================================
+   CARD 3D TILT EFFECT
+   CSS perspective hover — works on ALL cards without JS.
+   Subtle rotateX/Y + lift on hover for premium feel.
+   ========================================================== */
+.card,
+.card-3d,
+.magnetic-card,
+.skill-card,
+.hobby-card,
+.stat-card {
+  /* GPU-composited layer for zero-jank transitions */
+  will-change: transform;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.35s ease;
+}
+
+/* Avoid tilt on touch devices — it looks broken there */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover,
+  .card-3d:hover {
+    transform: perspective(800px) rotateX(3deg) rotateY(-3deg) translateY(-6px);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(138, 43, 226, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .skill-card:hover,
+  .hobby-card:hover {
+    transform: perspective(600px) rotateX(4deg) rotateY(4deg) translateY(-4px) scale(1.02);
+  }
+
+  .stat-card:hover {
+    transform: perspective(600px) rotateY(-5deg) translateY(-4px);
+  }
+
+  .magnetic-card:hover {
+    transform: perspective(1000px) rotateX(2deg) rotateY(4deg) translateY(-8px);
+    box-shadow:
+      0 24px 48px rgba(0, 0, 0, 0.4),
+      0 0 40px rgba(0, 206, 209, 0.2);
+  }
+}
+
+/* ==========================================================
+   PERFORMANCE: will-change on key animated elements
+   Only declare will-change on elements that actually animate —
+   over-declaring it wastes VRAM.
+   ========================================================== */
+.hamburger-btn,
+.hamburger-line,
+.sidebar,
+.sidebar-overlay,
+.theme-toggle::before,
+.nav-link,
+.back-to-top,
+.companion-img {
+  will-change: transform;
+}
+
+.skip-link {
+  will-change: top;
+}
+
+/* ==========================================================
+   SECTION HEADING DECORATIVE UNDERLINE
+   Adds an animated gradient underline below all section h2s.
+   ========================================================== */
+.heading-highlight {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.3em;
+}
+
+.heading-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--primary-color));
+  background-size: 200% 100%;
+  border-radius: 3px;
+  animation: headingUnderlineShift 3s linear infinite;
+}
+
+@keyframes headingUnderlineShift {
+  0%   { background-position: 0%   50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ==========================================================
+   FOOTER ENHANCEMENT — Social Links Row
+   ========================================================== */
+footer .social-footer-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+footer .social-footer-row a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(138, 43, 226, 0.35);
+  color: rgba(200, 200, 220, 0.7);
+  font-size: 1rem;
+  text-decoration: none;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+footer .social-footer-row a:hover {
+  color: #fff;
+  border-color: var(--secondary-color);
+  background: rgba(0, 206, 209, 0.1);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 206, 209, 0.3);
+}
+
+/* Quick nav in footer */
+footer .footer-quick-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+footer .footer-quick-nav a {
+  color: rgba(160, 160, 180, 0.7);
+  font-size: 0.78rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: color 0.3s ease;
+}
+footer .footer-quick-nav a:hover {
+  color: var(--secondary-color);
+}
+
+/* Divider line above footer social row */
+footer .footer-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+  margin: 1rem auto;
+}
+
+/* ==========================================================
+   MOBILE: COMPANION CHARACTER — hide on very small screens
+   to prevent overlap with content
+   ========================================================== */
+@media (max-width: 480px) {
+  .companion-container {
+    display: none !important;
+  }
+}
+
+/* ==========================================================
+   RESPONSIVE: grid fixes for very small screens
+   ========================================================== */
+@media (max-width: 480px) {
+  /* Stat cards in 2-col are too cramped at 375px — go single col */
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr 1fr; /* keep 2col but reduce gap */
+    gap: 0.5rem;
+  }
+  /* Reduce section padding on tiny screens */
+  section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+}
+
+/* ==========================================================
+   LOADING: Page fade-in enhancement
+   The GSAP body opacity animation looks better with this base
+   ========================================================== */
+html {
+  /* Prevent FOUC (flash of unstyled content) */
+  opacity: 1;
+}

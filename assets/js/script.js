@@ -1,4 +1,24 @@
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
+
 gsap.registerPlugin(ScrollTrigger);
+
+// Initialize Lenis for buttery smooth scrolling
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+  smoothWheel: true,
+  touchMultiplier: 2,
+});
+
+// Sync Lenis with GSAP ScrollTrigger
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => {
+  lenis.raf(time * 1000);
+});
+gsap.ticker.lagSmoothing(0);
+
 // 🚀 Vercel Serverless API - Instant response, no cold starts!
 const BACKEND_URL = "https://portfoli-contact.vercel.app";
 const sidebar = document.getElementById("sidebar");
@@ -610,7 +630,7 @@ if (backToTopButton) {
     } else {
       backToTopButton.classList.remove("show");
     }
-  });
+  }, { passive: true });
   backToTopButton.addEventListener("click", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
@@ -1136,3 +1156,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// ============================================================
+// SCROLL PROGRESS BAR
+// Updates CSS custom property --scroll-pct based on scroll position.
+// The visual bar is 100% CSS via body::before in glassmorphism.css.
+// ============================================================
+(function initScrollProgress() {
+  const root = document.documentElement;
+
+  function updateScrollProgress() {
+    const scrollTop = window.scrollY || root.scrollTop;
+    const docHeight  = root.scrollHeight - root.clientHeight;
+    const pct = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+    root.style.setProperty('--scroll-pct', pct.toFixed(2) + '%');
+  }
+
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+  updateScrollProgress(); // set initial
+})();
+
+// ============================================================
+// CUSTOM CURSOR GLOW
+// Runs only on pointer:fine (mouse) — skips mobile/touch.
+// Creates #cursor-dot (snaps) and #cursor-ring (lerp follows).
+// ============================================================
+(function initCustomCursor() {
+  if (!window.matchMedia('(pointer: fine)').matches) return;
+
+  const dot  = document.createElement('div');
+  const ring = document.createElement('div');
+  dot.id  = 'cursor-dot';
+  ring.id = 'cursor-ring';
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
+
+  let ringX = 0, ringY = 0;
+  let dotX  = 0, dotY  = 0;
+
+  // Lerp ring toward cursor; dot snaps exactly
+  function animateCursor() {
+    ringX += (dotX - ringX) * 0.18;
+    ringY += (dotY - ringY) * 0.18;
+    dot.style.left  = dotX  + 'px';
+    dot.style.top   = dotY  + 'px';
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.addEventListener('mousemove', (e) => {
+    dotX = e.clientX;
+    dotY = e.clientY;
+  }, { passive: true });
+
+  // Expand ring on interactive elements
+  const interactors = 'a, button, [role="button"], input, textarea, select, .card, .card-3d, .nav-link, .hamburger-btn, .companion-container';
+  document.addEventListener('mouseover', (e) => {
+    if (e.target.closest(interactors)) {
+      dot.classList.add('hovering');
+      ring.classList.add('hovering');
+    }
+  }, { passive: true });
+  document.addEventListener('mouseout', (e) => {
+    if (e.target.closest(interactors)) {
+      dot.classList.remove('hovering');
+      ring.classList.remove('hovering');
+    }
+  }, { passive: true });
+
+  // Click pulse
+  document.addEventListener('mousedown', () => ring.classList.add('clicking'),    { passive: true });
+  document.addEventListener('mouseup',   () => ring.classList.remove('clicking'), { passive: true });
+
+  // Hide when mouse leaves window
+  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; }, { passive: true });
+  document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; }, { passive: true });
+})();
