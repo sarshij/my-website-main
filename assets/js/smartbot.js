@@ -5,6 +5,8 @@
  * personality, voice support, draggable, persistent memory.
  */
 
+import athenaImg from '../img/Model/gothfixXL.webp';
+
 class SmartBot {
   constructor() {
     this.container = null;
@@ -138,7 +140,7 @@ class SmartBot {
           </div>
         </div>
         <div class="smartbot-fab" id="smartbotFab">
-          <img src="assets/img/Model/gothfixXL.webp" alt="AURA Chatbot" class="smartbot-fab-img" width="565" height="997">
+          <img src="${athenaImg}" alt="AURA Chatbot" class="smartbot-fab-img" width="565" height="997">
           <span class="smartbot-fab-badge">AI</span>
         </div>
       </div>
