@@ -139,13 +139,7 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"
       defer
     ></script>
-    <!-- Font Awesome: loaded async to avoid render-blocking -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      media="print" onload="this.media='all'"
-    />
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <!-- Font Awesome: bundled inside style.css — no CDN needed -->
     <!-- Fonts are now self-hosted via @font-face in style.css -->
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
@@ -161,6 +155,8 @@
   <body class="dark bg-transparent">
     <!-- WebGL Canvas for 3D Background -->
     <canvas id="webgl-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -20; pointer-events: none;"></canvas>
+    <div class="noise-overlay"></div>
+    <div class="scanlines"></div>
 
     <!-- Skip to main content link for accessibility -->
     <a href="#home" class="skip-link">Skip to main content</a>
@@ -183,6 +179,8 @@
               class="sidebar-hologram-avatar"
               loading="lazy"
               decoding="async"
+              width="100"
+              height="100"
             />
             <div class="avatar-scanline"></div>
           </div>
@@ -279,9 +277,10 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <main>
       <section id="home" class="min-h-screen flex relative overflow-hidden">
-        <div
-          class="hero-content-left z-10 flex flex-col justify-start px-6 md:px-12 lg:px-16 w-full lg:w-full xl:w-full pt-[45vh] lg:pt-[28vh]"
-        >
+          <div
+            class="hero-content-left z-10 flex flex-col justify-start px-6 md:px-12 lg:px-16 w-full lg:w-full xl:w-full pt-[45vh] lg:pt-[28vh]"
+            data-parallax="0.3"
+          >
           <div class="mb-2">
             <h1
               id="hero-name"
@@ -312,7 +311,7 @@
           >
             <span class="block md:hidden">·Engineering ·Technology</span
             ><span class="block md:hidden">·Cybersecurity ·AI</span
-            ><span class="hidden md:inline-block typing-text"
+            ><span class="hidden md:inline-block typing-text" data-phrases='["Engineering · Technology · Cybersecurity · AI","Electronics Engineer · AI Architect","Building the Future · One Line at a Time","Innovation · Security · Intelligence"]'
               >Engineering · Technology · Cybersecurity · AI</span
             >
           </div>
@@ -322,35 +321,30 @@
             <a
               href="https://github.com/SarshijKarn"
               target="_blank" rel="noopener noreferrer"
-              rel="noopener noreferrer"
               aria-label="GitHub"
               class="profile-link text-gray-400 hover:text-purple-400 text-3xl transition-all duration-300 transform hover:scale-125 hover:rotate-6"
               ><i class="fab fa-github"></i></a
             ><a
               href="https://www.linkedin.com/in/sarshij-karn-1a7766236/"
               target="_blank" rel="noopener noreferrer"
-              rel="noopener noreferrer"
               aria-label="LinkedIn"
               class="profile-link text-gray-400 hover:text-blue-400 text-3xl transition-all duration-300 transform hover:scale-125 hover:rotate-6"
               ><i class="fab fa-linkedin"></i></a
             ><a
               href="https://x.com/realsarshijkarn"
               target="_blank" rel="noopener noreferrer"
-              rel="noopener noreferrer"
               aria-label="X / Twitter"
               class="profile-link text-gray-400 hover:text-blue-400 text-3xl transition-all duration-300 transform hover:scale-125 hover:rotate-6"
               ><i class="fab fa-twitter"></i></a
             ><a
               href="https://www.instagram.com/sarshijkarn"
               target="_blank" rel="noopener noreferrer"
-              rel="noopener noreferrer"
               aria-label="Instagram"
               class="profile-link text-gray-400 hover:text-pink-400 text-3xl transition-all duration-300 transform hover:scale-125 hover:rotate-6"
               ><i class="fab fa-instagram"></i></a
             ><a
               href="https://youtube.com/@sarshijkarn"
               target="_blank" rel="noopener noreferrer"
-              rel="noopener noreferrer"
               aria-label="YouTube"
               class="profile-link text-gray-400 hover:text-red-500 text-3xl transition-all duration-300 transform hover:scale-125 hover:rotate-6"
               ><i class="fab fa-youtube"></i></a
@@ -365,13 +359,13 @@
             <a
               href="assets/Sarshij-Karn-Resume.pdf"
               download
-              class="cyber-download-btn w-full sm:w-auto"
+              class="cyber-download-btn magnetic-btn w-full sm:w-auto"
               ><span class="btn-text">RESUME</span
               ><i class="fas fa-download btn-icon"></i
             ></a>
           </div>
         </div>
-        <div class="hero-image-right pointer-events-none select-none relative h-full skeleton">
+        <div class="hero-image-right pointer-events-none select-none relative min-h-screen skeleton" style="aspect-ratio: 600/900;">
           <!-- 3D Scene background removed for cleaner look and better performance -->
 
           <div class="hero-img-overlay z-10"></div>
@@ -381,6 +375,8 @@
             class="full-body-img relative z-20"
             fetchpriority="high"
             decoding="async"
+            width="600"
+            height="900"
           />
         </div>
         <div
@@ -482,6 +478,8 @@
                         class="projected-profile-img"
                         loading="lazy"
                         decoding="async"
+                        width="400"
+                        height="400"
                       />
                       <div class="projection-noise"></div>
                     </div>
@@ -525,34 +523,34 @@
                     </p>
                   </div>
                   <div class="grid grid-cols-2 gap-4">
-                    <div class="stat-card group">
+                    <div class="stat-card group card-glow" style="--glow-x:50%;--glow-y:50%">
                       <div class="stat-inner">
                         <i class="fas fa-graduation-cap stat-icon-mini"></i>
                         <div class="stat-content">
-                          <span class="stat-value neon-purple">4.0</span
+                          <span class="stat-value neon-purple counter-value" data-target="40" data-divider="10" data-decimals="1" data-suffix="" data-duration="1500">0.0</span
                           ><span class="stat-label">Grade X GPA</span>
                         </div>
                       </div>
                     </div>
-                    <div class="stat-card group">
+                    <div class="stat-card group card-glow" style="--glow-x:50%;--glow-y:50%">
                       <div class="stat-inner">
                         <i class="fas fa-award stat-icon-mini"></i>
                         <div class="stat-content">
-                          <span class="stat-value neon-cyan">3.53</span
+                          <span class="stat-value neon-cyan counter-value" data-target="353" data-divider="100" data-decimals="2" data-suffix="" data-duration="1500">0.00</span
                           ><span class="stat-label">Grade XII</span>
                         </div>
                       </div>
                     </div>
-                    <div class="stat-card group">
+                    <div class="stat-card group card-glow" style="--glow-x:50%;--glow-y:50%">
                       <div class="stat-inner">
                         <i class="fas fa-microchip stat-icon-mini"></i>
                         <div class="stat-content">
-                          <span class="stat-value neon-purple">2024</span
+                          <span class="stat-value neon-purple counter-value" data-target="2024" data-divider="1" data-decimals="0" data-suffix="" data-duration="1000">0</span
                           ><span class="stat-label">Batch</span>
                         </div>
                       </div>
                     </div>
-                    <div class="stat-card group">
+                    <div class="stat-card group card-glow" style="--glow-x:50%;--glow-y:50%">
                       <div class="stat-inner">
                         <i class="fas fa-map-marker-alt stat-icon-mini"></i>
                         <div class="stat-content">
@@ -653,8 +651,8 @@
           >
             <span class="heading-highlight">Featured Projects</span>
           </h2>
-          <div class="grid grid-cols-2 gap-3 md:gap-8">
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group">
+            <div class="grid grid-cols-2 gap-3 md:gap-8">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d card-glow group" style="--glow-x:50%;--glow-y:50%">
               <div class="project-icon-container med-assist">
                 <div class="medical-cross">
                   <div class="cross-horizontal"></div>
@@ -889,11 +887,11 @@
 
       <!-- 🚀 View More Projects Section -->
       <!-- Changed from <section> to <div>: no heading content, just a CTA link -->
-      <div class="glass-panel p-6 md:p-12 mb-16 relative z-10 w-full overflow-hidden text-center">
+      <div class="glass-panel glass-luxury p-6 md:p-12 mb-16 relative z-10 w-full overflow-hidden text-center card-glow" style="--glow-x:50%;--glow-y:50%">
         <!-- Cyber Decoration Lines -->
         <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent -z-10"></div>
 
-        <a href="https://github.com/sarshij" target="_blank" rel="noopener noreferrer" class="cyber-download-btn group no-underline inline-flex">
+        <a href="https://github.com/sarshij" target="_blank" rel="noopener noreferrer" class="cyber-download-btn magnetic-btn group no-underline inline-flex">
           <span class="btn-text group-hover:text-white relative z-10">VIEW ALL PROJECTS (GITHUB)</span>
           <i class="fab fa-github btn-icon ml-2 relative z-10"></i>
         </a>
@@ -1159,7 +1157,7 @@
               ></a>
             </div>
           </div>
-          <div class="glass-panel p-8 w-full max-w-2xl mx-auto shadow-lg relative">
+          <div class="glass-panel glass-luxury p-8 w-full max-w-2xl mx-auto shadow-lg relative card-glow" style="--glow-x:50%;--glow-y:50%">
             <div class="contact-form-card">
               <h3 class="text-2xl font-semibold text-center mb-2 neon-cyan">
                 Drop a Message
@@ -1281,7 +1279,7 @@
                     data-theme="dark"
                   ></div>
                 </div>
-                <button type="submit" class="submit-button" aria-label="Send contact form message">
+                <button type="submit" class="submit-button magnetic-btn" aria-label="Send contact form message">
                   <span class="button-text">Send Message</span
                   ><span class="button-icon"
                     ><i class="fas fa-paper-plane"></i></span
@@ -1358,16 +1356,7 @@
       <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- 🎮 Corner Companion Character -->
-    <div class="companion-container" id="companion">
-      <img src="assets/img/Model/gothfixXL.png" alt="Athena - Companion Character" class="companion-img" loading="lazy" width="120" height="120" decoding="async">
-      <div class="companion-bubble" id="companionBubble">
-        <div class="voice-toggle" id="voiceToggle" title="Toggle Voice" role="button" aria-label="Toggle companion voice" tabindex="0">
-          <i class="fas fa-volume-mute"></i>
-        </div>
-        <span id="bubbleText"></span>
-      </div>
-    </div>
+    <!-- AI Chatbot is injected by smartbot.js -->
 
     <script type="module" src="/main.js"></script>
 
@@ -1386,7 +1375,6 @@
           if (getComputedStyle(el).opacity === '0') {
             el.style.opacity = '1';
             el.style.visibility = 'visible';
-            console.warn('⚠️ Failsafe triggered: Forced content visibility.');
           }
         });
       }, 4000); // 4 seconds safety timeout
@@ -1397,7 +1385,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-16ZZWBCPC0', { send_page_view: false });
+      gtag('config', 'G-16ZZWBCPC0');
     </script>
   </body>
 </html>

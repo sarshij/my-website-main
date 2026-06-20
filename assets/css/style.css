@@ -63,19 +63,20 @@
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleX(1);
   width: 100px;
   height: 3px;
   background: linear-gradient(90deg, transparent, #ffd600, transparent);
   border-radius: 2px;
-  box-shadow: 0 0 8px #ffd600; /* Reduced shadow radius */
+  box-shadow: 0 0 8px #ffd600;
   animation: underlinePulse 2s ease-in-out infinite;
-  will-change: width, opacity;
+  transform-origin: center;
+  will-change: transform, opacity;
 }
 
 @keyframes underlinePulse {
-  0%, 100% { width: 100px; opacity: 0.8; }
-  50% { width: 140px; opacity: 1; }
+  0%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.8; }
+  50% { transform: translateX(-50%) scaleX(1.4); opacity: 1; }
 }
 
 .neon-yellow .heading-highlight { font-weight: 500; }
@@ -119,16 +120,17 @@
   content: "";
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* Reduced opacity */
-  animation: shimmer 4s infinite; /* Slowed down slightly */
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 4s infinite;
+  transform: translateX(-100%);
 }
 
 @keyframes shimmer {
-  0% { left: -100%; }
-  100% { left: 100%; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
 
 .heading-animate {
@@ -163,7 +165,7 @@
 
 @keyframes particleFloat {
   0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.6; }
-  50% { transform: translateY(-70%) scale(1.1); opacity: 0.9; }
+  50% { transform: translateY(-70%) scale(1.15); opacity: 0.9; }
 }
 
 @keyframes headingPop {
@@ -208,6 +210,21 @@
   mask-composite: exclude;
 }
 
+/* Typing cursor */
+.typing-text::after {
+  content: '|';
+  display: inline-block;
+  margin-left: 4px;
+  color: #00ced1;
+  animation: cursor-blink 0.8s step-end infinite;
+  font-weight: 100;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .card-3d {
   transform-style: preserve-3d;
   transition: transform 0.2s ease;
@@ -238,75 +255,5 @@
 /* Skeleton Loader */
 .skeleton { background: linear-gradient(90deg, rgba(20, 20, 30, 0.4) 25%, rgba(138, 43, 226, 0.1) 50%, rgba(20, 20, 30, 0.4) 75%); background-size: 200% 100%; animation: skeleton-loading 1.5s infinite; border-radius: inherit; } @keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } } .skeleton img { opacity: 0; transition: opacity 0.3s ease-in-out; } .skeleton img.loaded { opacity: 1; } .skeleton.loaded { animation: none; background: none; }
 
-/* Athena AI Companion Redesign */
-.companion-container {
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-}
-
-.companion-bubble {
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(138, 43, 226, 0.3);
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    max-width: 300px;
-    color: #e0e0e0;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    transform-origin: bottom right;
-    margin-bottom: 0;
-    right: 160px;
-    bottom: 50px;
-}
-
-.companion-bubble::after {
-    border-left-color: rgba(10, 10, 10, 0.8);
-    right: -10px;
-    top: 80%;
-}
-
-.voice-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #00ced1;
-    width: 28px;
-    height: 28px;
-    top: -12px;
-    left: -12px;
-    transition: all 0.3s ease;
-}
-
-.voice-toggle:hover {
-    background: #00ced1;
-    color: #000;
-    box-shadow: 0 0 10px #00ced1;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .companion-container {
-        bottom: 90px;
-        right: 20px;
-    }
-
-    .companion-img {
-        width: 100px;
-    }
-
-    .companion-bubble {
-        right: 80px;
-        bottom: 10px;
-        max-width: 220px;
-        font-size: 0.8rem;
-        margin-right: 0;
-    }
-
-    .companion-bubble::after {
-        display: none;
-    }
-}
+/* AI Chatbot powered by smartbot.js */
 

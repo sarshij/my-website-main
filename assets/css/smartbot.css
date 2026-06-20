@@ -1,0 +1,377 @@
+/* ==========================================================
+   smartbot.css — AI Companion Chatbot Styles
+   Premium, futuristic chatbot UI with glassmorphism
+   ========================================================== */
+
+.smartbot-container {
+  position: fixed;
+  bottom: 30px;
+  right: 24px;
+  z-index: 9999;
+  font-family: 'Fira Code', monospace;
+}
+
+/* ─── FAB Button ─── */
+.smartbot-fab {
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3), 0 0 40px rgba(0, 206, 209, 0.15);
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: visible;
+  padding: 0;
+  line-height: 0;
+}
+
+.smartbot-fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 30px rgba(138, 43, 226, 0.5), 0 0 60px rgba(0, 206, 209, 0.25);
+}
+
+.smartbot-fab.hidden {
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.smartbot-fab-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ffd700;
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.3);
+  letter-spacing: 0.5px;
+  z-index: 2;
+  line-height: 1;
+}
+
+@media (max-width: 480px) {
+  .smartbot-fab-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    top: -4px;
+    right: -4px;
+  }
+}
+
+.smartbot-fab-img {
+  width: auto;
+  height: auto;
+  max-height: 290px;
+  border-radius: 10px;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .smartbot-fab-img {
+    max-height: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .smartbot-fab-img {
+    max-height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .smartbot-fab-img {
+    max-height: 150px;
+  }
+}
+
+/* ─── Chat Bubble ─── */
+.smartbot-bubble {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 360px;
+  max-height: 520px;
+  background: rgba(8, 8, 14, 0.92);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgba(0, 206, 209, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(138, 43, 226, 0.1);
+  display: flex;
+  flex-direction: column;
+  transform-origin: bottom right;
+  transform: scale(0.8) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+.smartbot-bubble.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ─── Header ─── */
+.smartbot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(0, 206, 209, 0.15);
+  flex-shrink: 0;
+}
+
+.smartbot-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.smartbot-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff88, 0 0 16px rgba(0, 255, 136, 0.3);
+  animation: smartbot-pulse 2s infinite;
+}
+
+@keyframes smartbot-pulse {
+  0%, 100% { box-shadow: 0 0 8px #00ff88, 0 0 16px rgba(0, 255, 136, 0.3); }
+  50% { box-shadow: 0 0 16px #00ff88, 0 0 32px rgba(0, 255, 136, 0.5); }
+}
+
+.smartbot-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #00fafe;
+  letter-spacing: 2px;
+}
+
+.smartbot-header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.smartbot-header-actions button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(200, 200, 220, 0.6);
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.smartbot-header-actions button:hover {
+  background: rgba(0, 206, 209, 0.15);
+  color: #00fafe;
+  box-shadow: 0 0 10px rgba(0, 206, 209, 0.3);
+}
+
+/* ─── Messages ─── */
+.smartbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(138, 43, 226, 0.3) transparent;
+}
+
+.smartbot-messages::-webkit-scrollbar {
+  width: 3px;
+}
+
+.smartbot-messages::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #8a2be2, #00ced1);
+  border-radius: 10px;
+}
+
+.smartbot-msg {
+  display: flex;
+  gap: 8px;
+  max-width: 90%;
+  animation: msg-in 0.3s ease;
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.smartbot-msg.bot {
+  align-self: flex-start;
+}
+
+.smartbot-msg.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8a2be2, #00ced1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+}
+
+.msg-content {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+
+.smartbot-msg.user .msg-content {
+  background: rgba(0, 206, 209, 0.1);
+  border-color: rgba(0, 206, 209, 0.15);
+}
+
+.msg-sender {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #8a2be2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.msg-text {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: rgba(220, 220, 240, 0.9);
+}
+
+.smartbot-msg.user .msg-text {
+  color: #e0f7fa;
+}
+
+/* ─── Typing Indicator ─── */
+.typing-dots span {
+  display: inline-block;
+  animation: typing-bounce 1.2s ease infinite;
+  font-size: 1.5rem;
+  line-height: 0.5;
+  color: #00ced1;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ─── Input Area ─── */
+.smartbot-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.smartbot-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 206, 209, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: white;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.smartbot-input:focus {
+  border-color: rgba(0, 206, 209, 0.5);
+  box-shadow: 0 0 15px rgba(0, 206, 209, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.smartbot-input::placeholder {
+  color: rgba(150, 150, 170, 0.5);
+}
+
+.smartbot-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #8a2be2, #00ced1);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.smartbot-send-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(0, 206, 209, 0.4);
+}
+
+.smartbot-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* ─── Mobile Responsive ─── */
+@media (max-width: 480px) {
+  .smartbot-container {
+    bottom: 20px;
+    right: 12px;
+  }
+
+  .smartbot-bubble {
+    width: calc(100vw - 24px);
+    right: 0;
+    bottom: 60px;
+    max-height: 65vh;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .smartbot-container {
+    bottom: 24px;
+    right: 16px;
+  }
+  .smartbot-bubble {
+    width: 360px;
+    bottom: 64px;
+  }
+}

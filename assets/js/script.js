@@ -4,6 +4,12 @@ import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Prevent browser scroll restoration — forces page to start at top
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 // Initialize Lenis for buttery smooth scrolling
 const lenis = new Lenis({
   duration: 1.2,
@@ -80,9 +86,48 @@ const isLowEndDevice = window.innerWidth <= 480;
 // Disables heavy effects on Tablets/Mobile (<1024px) OR if user prefers reduced motion
 const isLowPerf = window.innerWidth < 1024 || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// ─── Typing Cycle Effect ───
 const typingText = document.querySelector(".typing-text");
-if (typingText) {
-  // Simple fade-in instead of typing animation
+if (typingText && !isLowPerf) {
+  const phrases = JSON.parse(typingText.dataset.phrases || '[]');
+  if (phrases.length > 0) {
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let isPaused = false;
+
+    function typeCycle() {
+      const currentPhrase = phrases[phraseIndex];
+      if (!currentPhrase) { setTimeout(typeCycle, 2000); return; }
+
+      if (!isDeleting) {
+        charIndex++;
+        typingText.textContent = currentPhrase.substring(0, charIndex);
+        if (charIndex === currentPhrase.length) {
+          isPaused = true;
+          setTimeout(() => { isPaused = false; isDeleting = true; typeCycle(); }, 2000);
+          return;
+        }
+        setTimeout(typeCycle, 40 + Math.random() * 30);
+      } else {
+        charIndex--;
+        typingText.textContent = currentPhrase.substring(0, charIndex);
+        if (charIndex === 0) {
+          isDeleting = false;
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+          setTimeout(typeCycle, 500);
+          return;
+        }
+        setTimeout(typeCycle, 20 + Math.random() * 15);
+      }
+    }
+
+    typingText.style.opacity = "1";
+    setTimeout(typeCycle, 1500);
+  } else {
+    typingText.style.opacity = "1";
+  }
+} else if (typingText) {
   typingText.style.opacity = "1";
 }
 const animDuration = isLowPerf ? 0.5 : 1.5;
@@ -897,232 +942,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initPerformanceObserver();
 });
 
-// 7. Advanced Interactive Companion Character (Personalized Voice & Smart Hype)
-(function() {
-    const companion = document.getElementById('companion');
-    const companionBubble = document.getElementById('companionBubble');
-    const bubbleText = document.getElementById('bubbleText');
-    const companionImg = companion?.querySelector('.companion-img');
-    const voiceToggle = document.getElementById('voiceToggle');
-
-    if (!companion) return;
-
-    // --- State & Config ---
-    let isDragging = false;
-    let isMuted = true; // Default to muted: Speaks only on load (forced) or when clicked
-    let currentX = 0, currentY = 0, initialX = 0, initialY = 0;
-    let lastClickTime = 0;
-    let voice = null;
-
-    // --- Quotes & Facts (Short & Punchy) ---
-    const quotes = {
-        greeting: [
-            "👋 Welcome!",
-        ],
-        smart: [
-            "📄 Checking the resume?",
-            "💼 Looking for a pro?",
-            "🔗 Let's connect!",
-            "⚡ Electronics + Software",
-            "🌊 Scroll down!",
-            "📬 Want to collaborate?"
-        ],
-        facts: [
-            "🎓 Electronics Engineer.",
-            "💻 Full-stack + AI/ML",
-            "🤖 AI Projects.",
-            "🌐 Web + Hardware.",
-            "💪 Python, JS, C++",
-        ],
-        excited: ["🎉 Glad you're here!", "💫 Hi there!", "🌟 Awesome!"],
-        dragged: ["🚀 Wheee!", "🎯 Nice spot!", "😎 Moving!"]
-    };
-
-    const allEngage = [...quotes.smart, ...quotes.facts];
-
-    // --- Voice Initialization ---
-    // Simple voice initialization - prioritized performance
-    function initVoice() {
-        if (!window.speechSynthesis) return;
-        const voices = window.speechSynthesis.getVoices();
-        // Look for a "cute" sounding female voice (Google/Microsoft female voices)
-        voice = voices.find(v => v.name.includes('Female') || v.name.includes('Google UK English Female') || v.name.includes('Microsoft Zira') || v.name.includes('Samantha')) || voices[0];
-    }
-    if (window.speechSynthesis && speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = initVoice;
-    }
-    // Try immediate init
-    setTimeout(initVoice, 100);
-
-    function speak(text, force = false) {
-        if (!window.speechSynthesis) return;
-        if (isMuted && !force) return;
-
-        window.speechSynthesis.cancel();
-
-        // Strip emojis and metadata for a cleaner voice readout
-        const cleanText = text.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '').trim();
-
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        if (voice) utterance.voice = voice;
-        utterance.pitch = 1.3;
-        utterance.rate = 1.0;
-
-        companionBubble.classList.add('speaking');
-        utterance.onend = () => companionBubble.classList.remove('speaking');
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // --- UI Helpers ---
-    function updateMuteUI() {
-        if (!voiceToggle) return;
-        const icon = voiceToggle.querySelector('i');
-        // Always show as 'sound available on click' or 'muted'
-        icon.className = 'fas fa-volume-up';
-        voiceToggle.style.background = '#00ced1';
-        voiceToggle.title = "Click to Speak (One Time)";
-    }
-    updateMuteUI();
-
-    function showMessage(text, forceVoice = false, duration = 4000) {
-        if (!bubbleText) return;
-        bubbleText.textContent = text;
-        companionBubble.classList.add('show');
-        speak(text, forceVoice);
-        setTimeout(() => companionBubble.classList.remove('show'), duration);
-    }
-
-    // --- Interactivity ---
-    if (voiceToggle) {
-        voiceToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            // Speak only once per click
-            const randomMsg = allEngage[Math.floor(Math.random() * allEngage.length)];
-            showMessage(randomMsg, true); // Force voice for this interaction
-        });
-    }
-
-    companion.addEventListener('click', () => {
-        if (isDragging) return;
-        const now = Date.now();
-        if (now - lastClickTime < 300) {
-            playAnimation('spin');
-            showMessage(quotes.excited[Math.floor(Math.random() * quotes.excited.length)]);
-        } else {
-            const randomMsg = allEngage[Math.floor(Math.random() * allEngage.length)];
-            showMessage(randomMsg);
-        }
-        lastClickTime = now;
-    });
-
-    // --- Greeting & Loop ---
-    // Only greet on desktop to save mobile resources
-    if (window.innerWidth > 768) {
-        setTimeout(() => {
-            const greeting = quotes.greeting[Math.floor(Math.random() * quotes.greeting.length)];
-            showMessage(greeting, true); // Force voice for initial greeting
-        }, 2000); // Delayed slightly
-    }
-
-    // Auto-Engagement Loop - REDUCED FREQUENCY significantly
-    setInterval(() => {
-        // Desktop Only: Auto engage. Mobile: Touch only.
-        if (!companionBubble.classList.contains('show') && !isDragging && window.innerWidth > 768) {
-            // Only engage if tab is visible
-            if (document.visibilityState === 'visible') {
-                const randomMsg = allEngage[Math.floor(Math.random() * allEngage.length)];
-                showMessage(randomMsg);
-            }
-        }
-    }, 45000); // Increased from 18s to 45s
-
-    // --- Standard Mascot Logic (Drag/Anim/Track) ---
-    // Load Position
-    const savedPos = localStorage.getItem('companion-position');
-    // Only restore position on desktop to prevent it flying off-screen on mobile
-    if (savedPos && window.innerWidth > 768) {
-        try {
-            const { x, y } = JSON.parse(savedPos);
-            companion.style.right = 'auto'; companion.style.bottom = 'auto';
-            companion.style.left = x + 'px'; companion.style.top = y + 'px';
-        } catch (e) {
-            // Ignore error
-        }
-    }
-
-    // Reset position on resize (if switching to mobile)
-    window.addEventListener('resize', () => {
-        if (window.innerWidth <= 768) {
-            companion.style.left = '';
-            companion.style.top = '';
-            companion.style.right = '';
-            companion.style.bottom = '';
-        }
-    });
-
-    companion.addEventListener('mousedown', (e) => {
-        if (e.target.closest('.companion-bubble')) return;
-        isDragging = true;
-        const rect = companion.getBoundingClientRect();
-        initialX = e.clientX - rect.left; initialY = e.clientY - rect.top;
-        companion.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        currentX = Math.max(0, Math.min(e.clientX - initialX, window.innerWidth - companion.offsetWidth));
-        currentY = Math.max(0, Math.min(e.clientY - initialY, window.innerHeight - companion.offsetHeight));
-        companion.style.left = currentX + 'px'; companion.style.top = currentY + 'px';
-        companion.style.right = 'auto'; companion.style.bottom = 'auto';
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        companion.style.cursor = 'pointer';
-        localStorage.setItem('companion-position', JSON.stringify({ x: currentX, y: currentY }));
-        showMessage(quotes.dragged[Math.floor(Math.random() * quotes.dragged.length)]);
-    });
-
-    function playAnimation(type) {
-        companion.classList.remove('animate-wave', 'animate-bounce', 'animate-spin', 'animate-tilt');
-        void companion.offsetWidth;
-        companion.classList.add('animate-' + type);
-    }
-
-    // Reduced animation frequency
-    setInterval(() => {
-        if (!isDragging && document.visibilityState === 'visible') {
-            playAnimation(['wave', 'bounce', 'tilt'][Math.floor(Math.random() * 3)]);
-        }
-    }, 20000); // Increased from 12s to 20s
-
-    // THROTTLED Mouse Move for 3D Effect
-    let lastMove = 0;
-    document.addEventListener('mousemove', (e) => {
-        const now = Date.now();
-        if (now - lastMove < 200) return; // Increased throttle from 100ms to 200ms
-        lastMove = now;
-
-        // Disabled on mobile or if CPU is struggling (simplified check)
-        if (window.innerWidth <= 768) return;
-
-        const rect = companion.getBoundingClientRect();
-        // Only calculate if near the companion to save CPU
-        const dist = Math.hypot(e.clientX - (rect.left + rect.width /2), e.clientY - (rect.top + rect.height/2));
-        if (dist > 500) return;
-
-        const dx = e.clientX - (rect.left + rect.width / 2);
-        const dy = e.clientY - (rect.top + rect.height / 2);
-
-        // Simple approximation to avoid expensive atan2 if possible, keeping full logic for now but throttled
-        const angle = Math.atan2(dy, dx);
-        if (companionImg && !isDragging) {
-            companionImg.style.transform = `rotateX(${Math.cos(angle) * -5}deg) rotateY(${Math.sin(angle) * 5}deg)`;
-        }
-    });
-
-})();
+// Companion character replaced by AI Chatbot (smartbot.js)
 
 // Skeleton Loader Logic
 document.addEventListener('DOMContentLoaded', () => {
@@ -1176,61 +996,4 @@ document.addEventListener('DOMContentLoaded', () => {
   updateScrollProgress(); // set initial
 })();
 
-// ============================================================
-// CUSTOM CURSOR GLOW
-// Runs only on pointer:fine (mouse) — skips mobile/touch.
-// Creates #cursor-dot (snaps) and #cursor-ring (lerp follows).
-// ============================================================
-(function initCustomCursor() {
-  if (!window.matchMedia('(pointer: fine)').matches) return;
-
-  const dot  = document.createElement('div');
-  const ring = document.createElement('div');
-  dot.id  = 'cursor-dot';
-  ring.id = 'cursor-ring';
-  document.body.appendChild(dot);
-  document.body.appendChild(ring);
-
-  let ringX = 0, ringY = 0;
-  let dotX  = 0, dotY  = 0;
-
-  // Lerp ring toward cursor; dot snaps exactly
-  function animateCursor() {
-    ringX += (dotX - ringX) * 0.18;
-    ringY += (dotY - ringY) * 0.18;
-    dot.style.left  = dotX  + 'px';
-    dot.style.top   = dotY  + 'px';
-    ring.style.left = ringX + 'px';
-    ring.style.top  = ringY + 'px';
-    requestAnimationFrame(animateCursor);
-  }
-  animateCursor();
-
-  document.addEventListener('mousemove', (e) => {
-    dotX = e.clientX;
-    dotY = e.clientY;
-  }, { passive: true });
-
-  // Expand ring on interactive elements
-  const interactors = 'a, button, [role="button"], input, textarea, select, .card, .card-3d, .nav-link, .hamburger-btn, .companion-container';
-  document.addEventListener('mouseover', (e) => {
-    if (e.target.closest(interactors)) {
-      dot.classList.add('hovering');
-      ring.classList.add('hovering');
-    }
-  }, { passive: true });
-  document.addEventListener('mouseout', (e) => {
-    if (e.target.closest(interactors)) {
-      dot.classList.remove('hovering');
-      ring.classList.remove('hovering');
-    }
-  }, { passive: true });
-
-  // Click pulse
-  document.addEventListener('mousedown', () => ring.classList.add('clicking'),    { passive: true });
-  document.addEventListener('mouseup',   () => ring.classList.remove('clicking'), { passive: true });
-
-  // Hide when mouse leaves window
-  document.addEventListener('mouseleave', () => { dot.style.opacity = '0'; ring.style.opacity = '0'; }, { passive: true });
-  document.addEventListener('mouseenter', () => { dot.style.opacity = '1'; ring.style.opacity = '1'; }, { passive: true });
-})();
+// Custom cursor replaced by micro-interactions.js (CustomCursorV2)

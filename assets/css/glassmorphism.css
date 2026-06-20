@@ -4,6 +4,42 @@
    This file is safe from Tailwind recompilation purges.
    ========================================================== */
 
+/* ==========================================================
+   Self-hosted Fonts with font-display: swap for perf
+   ========================================================== */
+@font-face {
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+  src: url('../fonts/orbitron-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 300 500;
+  font-display: swap;
+  src: url('../fonts/firacode-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/poppins-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/poppins-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* ---- CSS Variables ---- */
 :root {
   --cyber-glass:         rgba(15, 15, 20, 0.72);
@@ -628,66 +664,7 @@ body::before {
   box-shadow: 0 0 10px var(--secondary-color), 0 0 20px rgba(0, 206, 209, 0.4);
 }
 
-/* ==========================================================
-   CUSTOM CURSOR GLOW (desktop only)
-   A small glowing circle that follows the mouse.
-   The cursor itself uses a dot + ring combo.
-   ========================================================== */
-@media (pointer: fine) {
-  /* Hide native cursor */
-  html, body, a, button, [role="button"], [tabindex] {
-    cursor: none !important;
-  }
-
-  /* Outer ring — lags slightly for trail effect */
-  #cursor-ring {
-    position: fixed;
-    top: 0; left: 0;
-    width: 36px; height: 36px;
-    border: 2px solid rgba(0, 206, 209, 0.6);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 999999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.12s ease, width 0.25s ease, height 0.25s ease, opacity 0.3s ease;
-    will-change: transform;
-  }
-
-  /* Inner dot — snaps to cursor */
-  #cursor-dot {
-    position: fixed;
-    top: 0; left: 0;
-    width: 8px; height: 8px;
-    background: var(--secondary-color);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 999999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px var(--secondary-color), 0 0 20px rgba(0, 206, 209, 0.5);
-    will-change: transform;
-    /* Snaps instantly — no transition */
-  }
-
-  /* Hover state: ring expands on interactive elements */
-  #cursor-ring.hovering {
-    width: 56px;
-    height: 56px;
-    border-color: var(--primary-color);
-    background: rgba(138, 43, 226, 0.08);
-  }
-  #cursor-dot.hovering {
-    background: var(--primary-color);
-    box-shadow: 0 0 15px var(--primary-color);
-  }
-
-  /* Click state: brief pulse */
-  #cursor-ring.clicking {
-    width: 24px;
-    height: 24px;
-    border-color: #ffd600;
-    transition: width 0.08s ease, height 0.08s ease;
-  }
-}
+/* Lightweight cursor glow handled by micro-interactions.js (CursorGlow) */
 
 /* ==========================================================
    HERO — MOBILE GRADIENT OVERLAY
@@ -730,8 +707,6 @@ body::before {
 .skill-card,
 .hobby-card,
 .stat-card {
-  /* GPU-composited layer for zero-jank transitions */
-  will-change: transform;
   transform-style: preserve-3d;
   transition:
     transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
@@ -771,17 +746,7 @@ body::before {
    Only declare will-change on elements that actually animate —
    over-declaring it wastes VRAM.
    ========================================================== */
-.hamburger-btn,
-.hamburger-line,
-.sidebar,
 .sidebar-overlay,
-.theme-toggle::before,
-.nav-link,
-.back-to-top,
-.companion-img {
-  will-change: transform;
-}
-
 .skip-link {
   will-change: top;
 }
@@ -883,16 +848,6 @@ footer .footer-divider {
 }
 
 /* ==========================================================
-   MOBILE: COMPANION CHARACTER — hide on very small screens
-   to prevent overlap with content
-   ========================================================== */
-@media (max-width: 480px) {
-  .companion-container {
-    display: none !important;
-  }
-}
-
-/* ==========================================================
    RESPONSIVE: grid fixes for very small screens
    ========================================================== */
 @media (max-width: 480px) {
@@ -905,6 +860,13 @@ footer .footer-divider {
   section {
     padding-top: 3rem !important;
     padding-bottom: 3rem !important;
+  }
+}
+
+/* Very tiny phones — single column for project cards */
+@media (max-width: 360px) {
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
   }
 }
 
