@@ -1,0 +1,55 @@
+# ==============================================================
+# Cloudflare Cache Purge on Push
+# ==============================================================
+# Automatically purges the entire Cloudflare cache whenever
+# code is pushed to the main branch. This ensures all visitors
+# get fresh content immediately after a deployment.
+#
+# Required GitHub Secrets:
+#   CLOUDFLARE_ZONE_ID  - Your site's Zone ID (from Cloudflare dashboard)
+#   CLOUDFLARE_API_TOKEN - API token with "Zone.Cache Purge" permission
+# ==============================================================
+
+name: Purge Cloudflare Cache
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  purge-cache:
+    name: Purge Cloudflare CDN Cache
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Purge the entire Cloudflare cache for the zone
+      - name: Purge Cloudflare Cache
+        run: |
+          echo "🚀 Purging Cloudflare cache for zone..."
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}')
+
+          # Extract HTTP status code (last line) and response body
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Response: $body"
+          echo "HTTP Status: $http_code"
+
+          # Check if the purge was successful
+          if [ "$http_code" -ne 200 ]; then
+            echo "❌ Cache purge failed with HTTP $http_code"
+            exit 1
+          fi
+
+          # Verify success field in JSON response
+          success=$(echo "$body" | python3 -c "import sys, json; print(json.load(sys.stdin).get('success', False))" 2>/dev/null || echo "false")
+          if [ "$success" = "True" ]; then
+            echo "✅ Cloudflare cache purged successfully!"
+          else
+            echo "❌ Cache purge reported failure"
+            exit 1
+          fi

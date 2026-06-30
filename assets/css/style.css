@@ -257,3 +257,40 @@
 
 /* AI Chatbot powered by smartbot.js */
 
+
+/* Added for Resume Screener and Faceshield */
+/* Better Resume Screener */
+.resume-screener { background: linear-gradient(135deg, #1f1c2c 0%, #928DAB 100%); overflow: hidden; position: relative; }
+.ai-resume { position: relative; width: 80px; height: 100px; background: rgba(255,255,255,0.1); border: 2px solid rgba(0, 206, 209, 0.5); border-radius: 8px; box-shadow: 0 0 20px rgba(0,206,209,0.3); backdrop-filter: blur(5px); z-index: 2; overflow: hidden; }
+.doc-outline { padding: 15px 10px; display: flex; flex-direction: column; gap: 8px; }
+.doc-header { width: 40px; height: 8px; background: #8a2be2; border-radius: 4px; box-shadow: 0 0 8px #8a2be2; }
+.doc-line { height: 4px; background: rgba(255,255,255,0.4); border-radius: 2px; }
+.doc-line.w-full { width: 100%; }
+.doc-line.w-3\/4 { width: 75%; }
+.doc-line.w-5\/6 { width: 85%; }
+.neural-net { position: absolute; inset: 0; pointer-events: none; }
+.node { position: absolute; width: 8px; height: 8px; background: #ffd600; border-radius: 50%; box-shadow: 0 0 10px #ffd600; animation: pulseNode 2s infinite alternate; }
+.node.n1 { top: 20%; right: 15px; }
+.node.n2 { top: 50%; left: 20px; animation-delay: 0.5s; }
+.node.n3 { bottom: 20%; right: 25px; animation-delay: 1s; }
+.conn { position: absolute; background: rgba(255,214,0,0.5); transform-origin: 0 50%; height: 2px; }
+.conn.c1 { top: 23%; left: 63px; width: 45px; transform: rotate(140deg); }
+.conn.c2 { top: 52%; left: 23px; width: 40px; transform: rotate(35deg); }
+.scan-beam { position: absolute; width: 150%; height: 25px; background: linear-gradient(to bottom, transparent, rgba(0,206,209,0.8), transparent); left: -25%; top: -30%; animation: aiScan 3s ease-in-out infinite; box-shadow: 0 0 15px rgba(0,206,209,0.5); opacity: 0.7; }
+@keyframes pulseNode { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(1.5); opacity: 1; } }
+@keyframes aiScan { 0% { top: -30%; } 50% { top: 110%; } 100% { top: -30%; } }
+
+/* Better Faceshield */
+.faceshield { background: linear-gradient(135deg, #0d324d 0%, #7f5a83 100%); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.cyber-shield { position: relative; width: 90px; height: 100px; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.shield-hexagon { position: absolute; width: 100%; height: 100%; background: rgba(39, 201, 63, 0.1); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); border: 2px solid #27c93f; box-shadow: 0 0 20px rgba(39,201,63,0.4) inset; }
+.shield-inner { position: absolute; width: 70%; height: 70%; background: rgba(0, 0, 0, 0.4); clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); }
+.shield-face { position: relative; width: 40px; height: 40px; }
+.face-eye-l, .face-eye-r { position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%; top: 12px; }
+.face-eye-l { left: 8px; }
+.face-eye-r { right: 8px; }
+.face-mouth { position: absolute; width: 20px; height: 8px; border-bottom: 2px solid #fff; border-radius: 50%; bottom: 8px; left: 10px; }
+.privacy-bar { position: absolute; width: 45px; height: 14px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px); top: 8px; left: -2px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.4); animation: glitchBar 3s infinite; box-shadow: 0 0 8px rgba(255,255,255,0.5); }
+.shield-pulse { position: absolute; width: 100%; height: 100%; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); border: 2px solid #27c93f; animation: shieldPulse 2s ease-out infinite; }
+@keyframes glitchBar { 0%, 95% { opacity: 1; transform: translateX(0); } 96% { opacity: 0.5; transform: translateX(-2px); } 98% { opacity: 0.8; transform: translateX(2px); } 100% { opacity: 1; transform: translateX(0); } }
+@keyframes shieldPulse { 0% { transform: scale(1); opacity: 1; border-width: 2px; } 100% { transform: scale(1.5); opacity: 0; border-width: 0px; } }
