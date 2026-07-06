@@ -6,7 +6,7 @@
 class LoadingScreen {
   constructor() {
     window.scrollTo(0, 0);
-    this.minDuration = 2500;
+    this.minDuration = 1000;
     this.startTime = performance.now();
     this.injectHTML();
     this.cacheElements();
