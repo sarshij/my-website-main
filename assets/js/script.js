@@ -1,6 +1,8 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
+// Lenis removed — native browser scroll is used for maximum smoothness.
+// The browser compositor handles scroll at the display's native refresh rate
+// (up to 120Hz on modern devices) with zero JS overhead.
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,20 +12,8 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0);
 
-// Initialize Lenis for buttery smooth scrolling
-const lenis = new Lenis({
-  duration: 1.2,
-  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
-  touchMultiplier: 2,
-});
-
-// Sync Lenis with GSAP ScrollTrigger
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((time) => {
-  lenis.raf(time * 1000);
-});
-gsap.ticker.lagSmoothing(0);
+// Connect native scroll events to GSAP ScrollTrigger on all devices
+window.addEventListener('scroll', () => ScrollTrigger.update(), { passive: true });
 
 // 🚀 Vercel Serverless API - Instant response, no cold starts!
 const BACKEND_URL = "https://portfoli-contact.vercel.app";
@@ -71,6 +61,8 @@ if (themeToggle) {
     themeToggle.classList.toggle("active");
   });
 }
+// Smooth anchor navigation — native scrollIntoView on all devices.
+// No JS scroll engine needed; CSS scroll-behavior: smooth handles the easing.
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault();

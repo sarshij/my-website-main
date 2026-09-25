@@ -87,75 +87,171 @@ class RippleEffect {
   }
 }
 
-// ─── Lightweight Cursor Glow ───
+// ─── Premium Two-Layer Cursor ───
+// dot   → near-instant follow (lerp 0.9) — feels physically attached to pointer
+// ring  → smooth elegant trail (lerp 0.12) — subtle visual flair, no lag
 class CursorGlow {
   constructor() {
     if (!window.matchMedia('(pointer: fine)').matches) return;
-    this.el = null;
-    this._ticking = false;
-    this.targetX = 0;
-    this.targetY = 0;
-    this.currentX = 0;
-    this.currentY = 0;
+
+    // Raw mouse position (updated instantly on every mousemove)
+    this.mx = 0;
+    this.my = 0;
+
+    // Dot — near-instant (lerp 0.9)
+    this.dotX = 0;
+    this.dotY = 0;
+
+    // Ring — smooth trail (lerp 0.12)
+    this.ringX = 0;
+    this.ringY = 0;
+
+    this._rafActive = false;
+    this._isHovering = false;
+    this._isClicking = false;
+
     this.init();
   }
 
   init() {
-    this.el = document.createElement('div');
-    this.el.id = 'cursor-glow';
-    document.body.appendChild(this.el);
-
+    // Inject styles
     const style = document.createElement('style');
     style.textContent = `
-      html, body, a, button, [role="button"], [tabindex] { cursor: none !important; }
-      #cursor-glow {
-        position: fixed; top: 0; left: 0;
-        width: 8px; height: 8px;
-        background: radial-gradient(circle, #00ced1, #8a2be2);
+      /* Hide native cursor on all interactive elements */
+      html, body, * { cursor: none !important; }
+
+      /* ── Dot: tiny sharp centre ── */
+      #cur-dot {
+        position: fixed;
+        top: 0; left: 0;
+        width: 6px; height: 6px;
         border-radius: 50%;
+        background: #00ced1;
         pointer-events: none;
         z-index: 999999;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 12px rgba(0,206,209,0.6), 0 0 24px rgba(138,43,226,0.3);
-        transition: width 0.25s ease, height 0.25s ease, opacity 0.3s ease, box-shadow 0.25s ease;
         will-change: transform;
-        mix-blend-mode: difference;
+        transform: translate3d(0,0,0) translate(-50%,-50%);
+        transition: width .15s, height .15s, background .2s;
       }
-      #cursor-glow.hovering {
-        width: 16px; height: 16px;
-        box-shadow: 0 0 20px rgba(138,43,226,0.8), 0 0 40px rgba(0,206,209,0.4);
-        background: radial-gradient(circle, #ffd700, #8a2be2);
+      #cur-dot.clicking {
+        width: 3px; height: 3px;
+        background: #ffd700;
       }
-      #cursor-glow.clicking {
-        width: 4px; height: 4px;
-        box-shadow: 0 0 30px rgba(255,215,0,0.9);
+      #cur-dot.hovering {
+        width: 10px; height: 10px;
+        background: #8a2be2;
       }
-      @media (pointer: coarse) { #cursor-glow { display: none !important; } }
+
+      /* ── Ring: smooth outer halo ── */
+      #cur-ring {
+        position: fixed;
+        top: 0; left: 0;
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(0,206,209,0.65);
+        pointer-events: none;
+        z-index: 999998;
+        will-change: transform;
+        transform: translate3d(0,0,0) translate(-50%,-50%);
+        transition: width .25s cubic-bezier(.23,1,.32,1),
+                    height .25s cubic-bezier(.23,1,.32,1),
+                    border-color .25s,
+                    opacity .3s;
+      }
+      #cur-ring.clicking {
+        width: 20px; height: 20px;
+        border-color: rgba(255,215,0,0.9);
+        opacity: 0.7;
+      }
+      #cur-ring.hovering {
+        width: 48px; height: 48px;
+        border-color: rgba(138,43,226,0.8);
+      }
+
+      @media (pointer: coarse) {
+        #cur-dot, #cur-ring { display: none !important; }
+      }
     `;
     document.head.appendChild(style);
 
+    // Create elements
+    this.dot  = document.createElement('div'); this.dot.id  = 'cur-dot';
+    this.ring = document.createElement('div'); this.ring.id = 'cur-ring';
+    document.body.append(this.dot, this.ring);
+
+    // Track raw mouse — no DOM writes here, just record position
     document.addEventListener('mousemove', (e) => {
-      this.targetX = e.clientX;
-      this.targetY = e.clientY;
-      if (!this._ticking) {
-        this._ticking = true;
-        requestAnimationFrame(() => {
-          this.currentX += (this.targetX - this.currentX) * 0.3;
-          this.currentY += (this.targetY - this.currentY) * 0.3;
-          this.el.style.left = this.currentX + 'px';
-          this.el.style.top = this.currentY + 'px';
-          this._ticking = false;
-        });
+      this.mx = e.clientX;
+      this.my = e.clientY;
+      if (!this._rafActive) this._loop(); // restart loop if idle
+    }, { passive: true });
+
+    // Hover state
+    const targets = 'a,button,[role="button"],input,textarea,select,.card,.card-3d,.magnetic-card,.stat-card,.nav-link,.hamburger-btn,.smartbot-fab';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest(targets)) {
+        this._isHovering = true;
+        this.dot.classList.add('hovering');
+        this.ring.classList.add('hovering');
+      }
+    }, { passive: true });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest(targets)) {
+        this._isHovering = false;
+        this.dot.classList.remove('hovering');
+        this.ring.classList.remove('hovering');
       }
     }, { passive: true });
 
-    const interactors = 'a, button, [role="button"], input, textarea, select, .card, .card-3d, .magnetic-card, .stat-card, .nav-link, .hamburger-btn, .smartbot-fab';
-    document.addEventListener('mouseover', (e) => { if (e.target.closest(interactors)) this.el?.classList.add('hovering'); }, { passive: true });
-    document.addEventListener('mouseout', (e) => { if (e.target.closest(interactors)) this.el?.classList.remove('hovering'); }, { passive: true });
-    document.addEventListener('mousedown', () => this.el?.classList.add('clicking'), { passive: true });
-    document.addEventListener('mouseup', () => this.el?.classList.remove('clicking'), { passive: true });
-    document.addEventListener('mouseleave', () => { if (this.el) this.el.style.opacity = '0'; }, { passive: true });
-    document.addEventListener('mouseenter', () => { if (this.el) this.el.style.opacity = '1'; }, { passive: true });
+    // Click state
+    document.addEventListener('mousedown', () => {
+      this._isClicking = true;
+      this.dot.classList.add('clicking');
+      this.ring.classList.add('clicking');
+    }, { passive: true });
+    document.addEventListener('mouseup', () => {
+      this._isClicking = false;
+      this.dot.classList.remove('clicking');
+      this.ring.classList.remove('clicking');
+    }, { passive: true });
+
+    // Hide/show on window leave/enter
+    document.addEventListener('mouseleave', () => {
+      this.dot.style.opacity  = '0';
+      this.ring.style.opacity = '0';
+    }, { passive: true });
+    document.addEventListener('mouseenter', () => {
+      this.dot.style.opacity  = '1';
+      this.ring.style.opacity = '1';
+    }, { passive: true });
+
+    // Kick off animation loop once
+    this._loop();
+  }
+
+  _loop() {
+    this._rafActive = true;
+
+    // Dot: nearly instant lerp (0.9) — feels physically attached
+    this.dotX  += (this.mx - this.dotX)  * 0.9;
+    this.dotY  += (this.my - this.dotY)  * 0.9;
+
+    // Ring: slow smooth trail lerp (0.12) — elegant follow
+    this.ringX += (this.mx - this.ringX) * 0.12;
+    this.ringY += (this.my - this.ringY) * 0.12;
+
+    // Write directly to transform — GPU composited, zero layout/paint
+    this.dot.style.transform  = `translate3d(${this.dotX.toFixed(1)}px,${this.dotY.toFixed(1)}px,0) translate(-50%,-50%)`;
+    this.ring.style.transform = `translate3d(${this.ringX.toFixed(1)}px,${this.ringY.toFixed(1)}px,0) translate(-50%,-50%)`;
+
+    // Stop the loop only when both elements have fully settled to avoid wasted frames
+    const dotDist  = Math.abs(this.mx - this.dotX)  + Math.abs(this.my - this.dotY);
+    const ringDist = Math.abs(this.mx - this.ringX) + Math.abs(this.my - this.ringY);
+    if (dotDist > 0.1 || ringDist > 0.5) {
+      requestAnimationFrame(() => this._loop());
+    } else {
+      this._rafActive = false; // fully settled — no more GPU work until next move
+    }
   }
 }
 

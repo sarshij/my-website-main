@@ -54,6 +54,15 @@
   --sidebar-border-light: rgba(0, 0, 0, 0.1);
 }
 
+/* Native smooth scrolling — handled by the browser compositor, zero JS overhead */
+html {
+  scroll-behavior: smooth;
+}
+/* Respect users who prefer no motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
 /* ---- Accessibility: Skip to main content link ----
    Visually hidden but reachable via keyboard (Tab).
    When focused, it appears for keyboard users. */

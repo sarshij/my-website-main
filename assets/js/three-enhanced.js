@@ -1,12 +1,11 @@
 /**
- * three-enhanced.js — Premium 3D Scene with bloom post-processing
- * Features: enhanced particles, UnrealBloomPass, floating geometric shapes
+ * three-enhanced.js — Optimized 3D Scene
+ * Features: enhanced particles, floating geometric shapes.
+ * Performance: UnrealBloomPass removed (GPU budget freed), particle CPU
+ * updates throttled, render loop paused when tab is hidden.
  */
 
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 class PremiumScene {
   constructor() {
@@ -37,8 +36,16 @@ class PremiumScene {
     this.particles = [];
     this.geometries = [];
 
+    // Track frame counter for throttled particle updates
+    this._frameCount = 0;
+    // Pause render loop when tab is hidden to save GPU
+    this._visible = !document.hidden;
+    document.addEventListener('visibilitychange', () => {
+      this._visible = !document.hidden;
+      if (this._visible) this.animate();
+    });
+
     this.initScene();
-    this.initPostProcessing();
     this.animate();
     this.addEvents();
   }
@@ -166,21 +173,8 @@ class PremiumScene {
     this.scene.add(gridHelper);
   }
 
-  initPostProcessing() {
-    if (this.isLowPerf) return;
-
-    this.composer = new EffectComposer(this.renderer);
-    const renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    this.bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      0.3,  // strength
-      0.3,  // radius
-      0.1   // threshold
-    );
-    this.composer.addPass(this.bloomPass);
-  }
+  // initPostProcessing removed — UnrealBloomPass was burning GPU on every frame.
+  // The neon glow aesthetic is maintained via CSS box-shadow & text-shadow effects.
 
   animate() {
     const delta = this.clock.getDelta();
@@ -194,27 +188,31 @@ class PremiumScene {
     this.scene.rotation.x = this.mouse.y * 0.08;
     this.scene.rotation.y = this.mouse.x * 0.08;
 
-    // Update particles
-    const positions = this.particleSystem.geometry.attributes.position.array;
-    const sizes = this.particleSystem.geometry.attributes.size;
+    // Throttle CPU particle buffer uploads to every 2nd frame (30fps update, 60fps render)
+    // This halves the JS CPU work without any visible difference
+    this._frameCount++;
+    if (this._frameCount % 2 === 0) {
+      const positions = this.particleSystem.geometry.attributes.position.array;
+      const sizes = this.particleSystem.geometry.attributes.size;
 
-    for (let i = 0; i < this.particles.length; i++) {
-      const p = this.particles[i];
-      positions[i * 3] += p.velocity.x + Math.sin(elapsed * 0.3 + p.phase) * 0.002;
-      positions[i * 3 + 1] += p.velocity.y + Math.cos(elapsed * 0.2 + p.phase) * 0.002;
-      positions[i * 3 + 2] += p.velocity.z;
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        positions[i * 3] += p.velocity.x + Math.sin(elapsed * 0.3 + p.phase) * 0.002;
+        positions[i * 3 + 1] += p.velocity.y + Math.cos(elapsed * 0.2 + p.phase) * 0.002;
+        positions[i * 3 + 2] += p.velocity.z;
 
-      // Boundary wrap
-      if (Math.abs(positions[i * 3]) > 60) p.velocity.x *= -1;
-      if (Math.abs(positions[i * 3 + 1]) > 60) p.velocity.y *= -1;
-      if (Math.abs(positions[i * 3 + 2]) > 30) p.velocity.z *= -1;
+        // Boundary wrap
+        if (Math.abs(positions[i * 3]) > 60) p.velocity.x *= -1;
+        if (Math.abs(positions[i * 3 + 1]) > 60) p.velocity.y *= -1;
+        if (Math.abs(positions[i * 3 + 2]) > 30) p.velocity.z *= -1;
 
-      // Twinkle
-      const twinkle = 0.6 + 0.4 * Math.sin(elapsed * 2 + p.phase);
-      sizes.array[i] = p.baseSize * twinkle;
+        // Twinkle — subtle size pulse
+        const twinkle = 0.6 + 0.4 * Math.sin(elapsed * 2 + p.phase);
+        sizes.array[i] = p.baseSize * twinkle;
+      }
+      this.particleSystem.geometry.attributes.position.needsUpdate = true;
+      sizes.needsUpdate = true;
     }
-    this.particleSystem.geometry.attributes.position.needsUpdate = true;
-    sizes.needsUpdate = true;
 
     // Animate geometric shapes
     if (this.icoMesh) {
@@ -235,14 +233,13 @@ class PremiumScene {
     if (this.knotMesh) this.knotMesh.position.y = -5 + Math.sin(elapsed * 0.2 + 1) * 1.5;
     if (this.octMesh) this.octMesh.position.y = 8 + Math.sin(elapsed * 0.25 + 2) * 1.5;
 
-    // Render
-    if (this.composer) {
-      this.composer.render();
-    } else {
-      this.renderer.render(this.scene, this.camera);
-    }
+    // Direct render — no post-processing overhead
+    this.renderer.render(this.scene, this.camera);
 
-    requestAnimationFrame(() => this.animate());
+    // Only schedule next frame if tab is visible
+    if (this._visible) {
+      requestAnimationFrame(() => this.animate());
+    }
   }
 
   addEvents() {
@@ -250,9 +247,6 @@ class PremiumScene {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
-      if (this.composer) {
-        this.composer.setSize(window.innerWidth, window.innerHeight);
-      }
     });
 
     window.addEventListener('mousemove', (e) => {
