@@ -87,171 +87,67 @@ class RippleEffect {
   }
 }
 
-// ─── Premium Two-Layer Cursor ───
-// dot   → near-instant follow (lerp 0.9) — feels physically attached to pointer
-// ring  → smooth elegant trail (lerp 0.12) — subtle visual flair, no lag
+// ─── Colorful Native Cursor ───
+// Uses a CSS custom cursor (SVG data-URI) — pure OS-level rendering.
+// Zero JS animation loop, zero DOM elements, perfectly instant at all times.
 class CursorGlow {
   constructor() {
+    // Remove any leftover custom cursor elements from previous sessions
+    ['cur-dot', 'cur-ring'].forEach(id => document.getElementById(id)?.remove());
+
+    // Only apply on desktop pointer (not touch devices)
     if (!window.matchMedia('(pointer: fine)').matches) return;
-
-    // Raw mouse position (updated instantly on every mousemove)
-    this.mx = 0;
-    this.my = 0;
-
-    // Dot — near-instant (lerp 0.9)
-    this.dotX = 0;
-    this.dotY = 0;
-
-    // Ring — smooth trail (lerp 0.12)
-    this.ringX = 0;
-    this.ringY = 0;
-
-    this._rafActive = false;
-    this._isHovering = false;
-    this._isClicking = false;
 
     this.init();
   }
 
   init() {
-    // Inject styles
+    // Vibrant yellow arrow cursor (SVG, standard arrow shape)
+    // Hotspot at 4,2 = tip of the arrow
+    const arrowSVG = `<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'>
+      <path d='M4 2 L4 22 L8 17 L11.5 25 L14.5 23.5 L11 16 L17 16 Z'
+            fill='%23FFD700' stroke='%231a1a1a' stroke-width='1.2'
+            stroke-linejoin='round' stroke-linecap='round'/>
+    </svg>`;
+
+    // Yellow pointer hand for hover states
+    const handSVG = `<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'>
+      <path d='M10 2 C10 2 10 14 10 16 L6 16 C5 16 4 17 4 18 L4 20 C4 21 5 22 6 22
+               L6 23 C6 24 7 25 8 25 L20 25 C21 25 22 24 22 23 L22 16
+               C22 15 21.5 14 20.5 14 L14 14 L14 2 C14 1 13 0 12 0 C11 0 10 1 10 2 Z'
+            fill='%23FFD700' stroke='%231a1a1a' stroke-width='1.2'
+            stroke-linejoin='round'/>
+    </svg>`;
+
+    const arrowURL = `url("data:image/svg+xml,${arrowSVG}") 4 2, auto`;
+    const handURL  = `url("data:image/svg+xml,${handSVG}") 10 2, pointer`;
+
+    // Inject the cursor CSS — OS handles all rendering, no JS needed
     const style = document.createElement('style');
+    style.id = 'colorful-cursor-style';
     style.textContent = `
-      /* Hide native cursor on all interactive elements */
-      html, body, * { cursor: none !important; }
-
-      /* ── Dot: tiny sharp centre ── */
-      #cur-dot {
-        position: fixed;
-        top: 0; left: 0;
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        background: #00ced1;
-        pointer-events: none;
-        z-index: 999999;
-        will-change: transform;
-        transform: translate3d(0,0,0) translate(-50%,-50%);
-        transition: width .15s, height .15s, background .2s;
+      /* Vibrant yellow native cursor — pure CSS, zero JS overhead */
+      html, body, * {
+        cursor: ${arrowURL} !important;
       }
-      #cur-dot.clicking {
-        width: 3px; height: 3px;
-        background: #ffd700;
+      /* Yellow pointer hand on interactive elements */
+      a, button, [role="button"], input[type="submit"], input[type="button"],
+      input[type="checkbox"], input[type="radio"], select, label[for],
+      .nav-link, .card, .card-3d, .magnetic-btn, .cyber-download-btn,
+      .smartbot-fab, .profile-link, .back-to-top, [data-cursor="pointer"] {
+        cursor: ${handURL} !important;
       }
-      #cur-dot.hovering {
-        width: 10px; height: 10px;
-        background: #8a2be2;
+      /* Text fields: keep text cursor */
+      input[type="text"], input[type="email"], input[type="search"],
+      textarea, [contenteditable] {
+        cursor: text !important;
       }
-
-      /* ── Ring: smooth outer halo ── */
-      #cur-ring {
-        position: fixed;
-        top: 0; left: 0;
-        width: 32px; height: 32px;
-        border-radius: 50%;
-        border: 1.5px solid rgba(0,206,209,0.65);
-        pointer-events: none;
-        z-index: 999998;
-        will-change: transform;
-        transform: translate3d(0,0,0) translate(-50%,-50%);
-        transition: width .25s cubic-bezier(.23,1,.32,1),
-                    height .25s cubic-bezier(.23,1,.32,1),
-                    border-color .25s,
-                    opacity .3s;
-      }
-      #cur-ring.clicking {
-        width: 20px; height: 20px;
-        border-color: rgba(255,215,0,0.9);
-        opacity: 0.7;
-      }
-      #cur-ring.hovering {
-        width: 48px; height: 48px;
-        border-color: rgba(138,43,226,0.8);
-      }
-
+      /* Touch devices: let the OS handle cursors naturally */
       @media (pointer: coarse) {
-        #cur-dot, #cur-ring { display: none !important; }
+        html, body, *, a, button { cursor: auto !important; }
       }
     `;
     document.head.appendChild(style);
-
-    // Create elements
-    this.dot  = document.createElement('div'); this.dot.id  = 'cur-dot';
-    this.ring = document.createElement('div'); this.ring.id = 'cur-ring';
-    document.body.append(this.dot, this.ring);
-
-    // Track raw mouse — no DOM writes here, just record position
-    document.addEventListener('mousemove', (e) => {
-      this.mx = e.clientX;
-      this.my = e.clientY;
-      if (!this._rafActive) this._loop(); // restart loop if idle
-    }, { passive: true });
-
-    // Hover state
-    const targets = 'a,button,[role="button"],input,textarea,select,.card,.card-3d,.magnetic-card,.stat-card,.nav-link,.hamburger-btn,.smartbot-fab';
-    document.addEventListener('mouseover', (e) => {
-      if (e.target.closest(targets)) {
-        this._isHovering = true;
-        this.dot.classList.add('hovering');
-        this.ring.classList.add('hovering');
-      }
-    }, { passive: true });
-    document.addEventListener('mouseout', (e) => {
-      if (e.target.closest(targets)) {
-        this._isHovering = false;
-        this.dot.classList.remove('hovering');
-        this.ring.classList.remove('hovering');
-      }
-    }, { passive: true });
-
-    // Click state
-    document.addEventListener('mousedown', () => {
-      this._isClicking = true;
-      this.dot.classList.add('clicking');
-      this.ring.classList.add('clicking');
-    }, { passive: true });
-    document.addEventListener('mouseup', () => {
-      this._isClicking = false;
-      this.dot.classList.remove('clicking');
-      this.ring.classList.remove('clicking');
-    }, { passive: true });
-
-    // Hide/show on window leave/enter
-    document.addEventListener('mouseleave', () => {
-      this.dot.style.opacity  = '0';
-      this.ring.style.opacity = '0';
-    }, { passive: true });
-    document.addEventListener('mouseenter', () => {
-      this.dot.style.opacity  = '1';
-      this.ring.style.opacity = '1';
-    }, { passive: true });
-
-    // Kick off animation loop once
-    this._loop();
-  }
-
-  _loop() {
-    this._rafActive = true;
-
-    // Dot: nearly instant lerp (0.9) — feels physically attached
-    this.dotX  += (this.mx - this.dotX)  * 0.9;
-    this.dotY  += (this.my - this.dotY)  * 0.9;
-
-    // Ring: slow smooth trail lerp (0.12) — elegant follow
-    this.ringX += (this.mx - this.ringX) * 0.12;
-    this.ringY += (this.my - this.ringY) * 0.12;
-
-    // Write directly to transform — GPU composited, zero layout/paint
-    this.dot.style.transform  = `translate3d(${this.dotX.toFixed(1)}px,${this.dotY.toFixed(1)}px,0) translate(-50%,-50%)`;
-    this.ring.style.transform = `translate3d(${this.ringX.toFixed(1)}px,${this.ringY.toFixed(1)}px,0) translate(-50%,-50%)`;
-
-    // Stop the loop only when both elements have fully settled to avoid wasted frames
-    const dotDist  = Math.abs(this.mx - this.dotX)  + Math.abs(this.my - this.dotY);
-    const ringDist = Math.abs(this.mx - this.ringX) + Math.abs(this.my - this.ringY);
-    if (dotDist > 0.1 || ringDist > 0.5) {
-      requestAnimationFrame(() => this._loop());
-    } else {
-      this._rafActive = false; // fully settled — no more GPU work until next move
-    }
   }
 }
 

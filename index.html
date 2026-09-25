@@ -8,10 +8,14 @@
     />
     <!-- Cache Control: Handled via server HTTP response headers (Vercel/GitLab) -->
     <title>Sarshij Karn | Electronics Engineer · AI · Cybersecurity</title>
-    <link rel="preload" href="assets/img/HomepageFix.webp" as="image">
-    <!-- Preload primary heading font for faster LCP -->
+    <!-- LCP hero image: fetchpriority="high" on the <img> tag handles this correctly.
+         NOTE: Do NOT add a <link rel="preload"> for Vite-processed images — Vite hashes
+         filenames in production (e.g. HomepageFix--nM5XE1o.webp) so a preload in HTML
+         pointing to the un-hashed path would NEVER match the real resource. -->
+    <!-- Preload primary heading font for faster LCP — font path is NOT hashed by Vite -->
     <link rel="preload" href="assets/fonts/orbitron-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="canonical" href="https://sarshijkarn.com.np/" />
+
     <meta
       name="description"
       content="Electronics & AI-focused engineer from Nepal skilled in cybersecurity, programming, and tech systems. Building future-ready solutions."

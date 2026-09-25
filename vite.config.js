@@ -8,6 +8,10 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     minify: 'esbuild',
+    // Target modern browsers only — saves ~11 KiB of legacy polyfills.
+    // Safe: this site already uses CSS features (backdrop-filter, etc.)
+    // that only work in modern browsers anyway.
+    target: 'esnext',
     rollupOptions: {
       input: {
         main: './index.html',
@@ -27,3 +31,4 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
   },
 });
+
