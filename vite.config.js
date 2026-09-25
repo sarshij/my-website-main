@@ -15,9 +15,11 @@ export default defineConfig({
       },
       output: {
         manualChunks(id) {
+          // Split heavy libraries into separate async chunks
+          // so the main JS bundle stays lean for fast FCP/LCP
           if (id.includes('node_modules/three/')) return 'three';
           if (id.includes('node_modules/gsap/')) return 'gsap';
-          if (id.includes('node_modules/lenis/')) return 'vendor';
+          // lenis removed
           if (id.includes('node_modules/@upstash/') || id.includes('node_modules/axios/')) return 'api-vendor';
         },
       },

@@ -63,6 +63,21 @@ html {
   html { scroll-behavior: auto; }
 }
 
+/* ---- WebGL Background Canvas ----
+   Moved from inline HTML style for cacheability.
+   Hidden on mobile: Three.js is not loaded there (saves GPU + LCP budget). */
+#webgl-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: -20;
+  pointer-events: none;
+}
+@media (max-width: 1023px), (pointer: coarse) {
+  /* Three.js is not loaded on mobile, so hide the empty canvas element */
+  #webgl-canvas { display: none; }
+}
+
 /* ---- Accessibility: Skip to main content link ----
    Visually hidden but reachable via keyboard (Tab).
    When focused, it appears for keyboard users. */

@@ -3,6 +3,7 @@
  * Features: enhanced particles, floating geometric shapes.
  * Performance: UnrealBloomPass removed (GPU budget freed), particle CPU
  * updates throttled, render loop paused when tab is hidden.
+ * webgl.js was removed — it was a duplicate renderer on the same canvas.
  */
 
 import * as THREE from 'three';
@@ -12,7 +13,14 @@ class PremiumScene {
     this.canvas = document.getElementById('webgl-canvas');
     if (!this.canvas) return;
 
-    this.isLowPerf = window.innerWidth < 768 || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Three performance tiers:
+    //   low  (mobile / reduced-motion): 80 particles, no geometry
+    //   mid  (1024–1440px laptop):     200 particles, geometry enabled
+    //   high (1440px+ desktop):          400 particles, geometry enabled
+    const w = window.innerWidth;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.isLowPerf = w < 1024 || prefersReducedMotion;
+    this.isMidPerf = !this.isLowPerf && w < 1440;
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -58,7 +66,8 @@ class PremiumScene {
   }
 
   createParticles() {
-    const count = this.isLowPerf ? 80 : 400;
+    // Particle count per performance tier
+    const count = this.isLowPerf ? 80 : this.isMidPerf ? 200 : 400;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);

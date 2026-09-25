@@ -127,18 +127,8 @@
         ]
       }
     </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
-      defer
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
-      defer
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"
-      defer
-    ></script>
+    <!-- GSAP & ScrollTrigger: bundled by Vite from node_modules — no CDN needed -->
+    <!-- vanilla-tilt: removed (replaced by CSS/GSAP hover effects) -->
     <!-- Font Awesome: bundled inside style.css — no CDN needed -->
     <!-- Fonts are now self-hosted via @font-face in style.css -->
     <script
@@ -147,14 +137,13 @@
       defer
     ></script>
     <link rel="dns-prefetch" href="https://challenges.cloudflare.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
 
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
   </head>
   <body class="dark bg-transparent">
     <!-- WebGL Canvas for 3D Background -->
-    <canvas id="webgl-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -20; pointer-events: none;"></canvas>
+    <canvas id="webgl-canvas"></canvas>
     <div class="noise-overlay"></div>
     <div class="scanlines"></div>
 
@@ -169,7 +158,7 @@
       <span class="hamburger-line"></span><span class="hamburger-line"></span
       ><span class="hamburger-line"></span>
     </button>
-    <aside id="sidebar" class="sidebar" aria-label="Sidebar Navigation" role="complementary" data-lenis-prevent>
+    <aside id="sidebar" class="sidebar" aria-label="Sidebar Navigation" role="complementary">
       <div class="sidebar-header">
         <div class="sidebar-profile-container">
           <div class="sidebar-avatar-wrapper">
@@ -371,7 +360,7 @@
           <div class="hero-img-overlay z-10"></div>
           <img
             src="assets/img/HomepageFix.webp"
-            alt="Sarshij Karn"
+            alt="Sarshij Karn — Electronics and AI Engineer from Nepal"
             class="full-body-img relative z-20"
             fetchpriority="high"
             decoding="async"
@@ -671,7 +660,7 @@
                   <div class="scan-beam"></div>
                 </div>
               </div>
-              <h3 class="text-sm md:text-xl font-semibold mb-3">-BERT-Powered-Resume-Screener</h3>
+              <h3 class="text-sm md:text-xl font-semibold mb-3">BERT-Powered Resume Screener</h3>
               <p class="text-xs md:text-sm mb-4 line-clamp-3">
                 BERT-Based Resume Screening & Authenticity Validation Using Decision Tree Classification
               </p>
