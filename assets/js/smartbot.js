@@ -49,7 +49,7 @@ class SmartBot {
       ],
       skills: [
         { keywords: ['skills', 'expertise', 'what can he do', 'technologies', 'tech stack', 'languages', 'programming'],
-          response: 'Sarshij\'s core skills include: Python, C/C++, JavaScript for programming; AI/ML with TensorFlow, Keras, OpenCV, MediaPipe; web development with HTML5, CSS3, JS and frontend optimization; electronics including circuit simulation, Arduino, PCB design; cybersecurity with Linux security and ethical hacking; and tools like Git, VS Code, and PowerShell automation.' },
+          response: 'Sarshij\'s core skills include: Python, C/C++, JavaScript, and React; AI/ML with TensorFlow, Keras, OpenCV, MediaPipe, and SBERT; web & cloud platforms including Cloudflare, Vercel, GitHub, and GitLab; electronics including circuit simulation, Arduino, and PCB design; cybersecurity with Linux and network security; and AI/automation tools like GPT/LLM, n8n, Zapier, and PowerShell.' },
         { keywords: ['ai', 'machine learning', 'ml', 'deep learning', 'artificial intelligence'],
           response: 'Sarshij has strong AI/ML skills! He works with TensorFlow, Keras, OpenCV, and MediaPipe. His projects include emotion detection models, gesture-based calculators, and AI-powered healthcare apps. He also explores prompt engineering and AI agents.' },
         { keywords: ['cybersecurity', 'security', 'hacking', 'ethical hacking'],
@@ -61,7 +61,7 @@ class SmartBot {
         { keywords: ['projects', 'what has he built', 'his work', 'portfolio', 'github'],
           response: 'Sarshij has built 10 featured projects! Sync (Mobile Telemetry), FaceShield (Video Face Blur), ClearHire (AI Resume Screener), Reddit Data Scraper, WhatsApp Automation, MedAssist (AI Medical Assistant), HyperQR, SmartVault, Gesture Based Calculator, and Emotion Detection Model. Check them out in the Projects section!' },
         { keywords: ['sync', 'telemetry', 'fleet'],
-          response: 'Sync is a self-hosted Android telemetry and zero-touch remote control system supporting real-time GPS, chats, 2-sided calls, live screen, camera, and file vaults.' },
+          response: 'Sync is a self-hosted Android telemetry and remote fleet management system supporting real-time GPS tracking, communication logs, live screen and camera diagnostics, and secure file sync for authorized MDM deployments.' },
         { keywords: ['faceshield', 'blur faces'],
           response: 'FaceShield is a locally-hosted SPA web tool that automatically detects, tracks, and blurs faces in videos using MediaPipe and DeepSORT.' },
         { keywords: ['clearhire', 'resume screener', 'sbert'],
@@ -93,7 +93,7 @@ class SmartBot {
         { keywords: ['resume', 'cv', 'hire', 'job'],
           response: 'You can download Sarshij\'s resume from the Home section! He\'s open to internships, collaborations, and exciting opportunities in AI, cybersecurity, and electronics engineering.' },
         { keywords: ['website', 'this site', 'built with'],
-          response: 'This website was built with vanilla JavaScript, Three.js for 3D particles, GSAP for smooth animations, and Tailwind CSS. It\'s powered by Vite and deployed on Vercel. Every pixel was crafted for maximum impact!' },
+          response: 'This website was built with vanilla JavaScript, Three.js for 3D particles, GSAP for smooth animations, and Tailwind CSS. It\'s powered by Vite and deployed on Cloudflare Pages. Every pixel was crafted for maximum impact!' },
       ],
       fallback: [
         { keywords: [],

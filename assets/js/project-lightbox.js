@@ -312,8 +312,12 @@ class ProjectLightbox {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    new ProjectLightbox();
+  });
+} else {
   new ProjectLightbox();
-});
+}
 
 export default ProjectLightbox;

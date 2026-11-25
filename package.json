@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "deploy": "vercel --prod",
-    "build": "vite build && node config/update-version.js",
+    "build": "node config/sync-resume.js && node config/update-version.js && vite build",
     "preview": "vite preview",
     "prepare": "husky"
   },

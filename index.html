@@ -350,7 +350,7 @@
           </div>
           <div class="flex flex-wrap items-center gap-4 mt-2 sm:mt-4">
             <a
-              href="assets/Sarshij-Karn-Resume.pdf?v=20261125230250"
+              href="assets/Sarshij-Karn-Resume.pdf?v=20261125232052"
               download="Sarshij-Karn-Resume.pdf"
               class="cyber-download-btn magnetic-btn w-full sm:w-auto"
               ><span class="btn-text">RESUME</span
@@ -583,10 +583,10 @@
               <h3 class="text-xl font-semibold mb-3">Web & Platforms</h3>
               <div class="text-sm space-y-1">
                 <div>HTML5, CSS3, JS</div>
+                <div>React</div>
                 <div>Responsive UI</div>
-                <div>Domain & hosting</div>
                 <div>Frontend optimization</div>
-                <div>Project deployment</div>
+                <div>Cloudflare & Vercel</div>
               </div>
             </div>
             <div class="card rounded-xl p-6 text-center card-3d">
@@ -617,7 +617,7 @@
               <h3 class="text-xl font-semibold mb-3">Cybersecurity</h3>
               <div class="text-sm space-y-1">
                 <div>Linux security</div>
-                <div>Ethical hacking (learning)</div>
+                <div>Networking & security</div>
                 <div>Terminal operations</div>
                 <div>Security tools</div>
                 <div>Automation for security</div>
@@ -627,11 +627,11 @@
               <i class="fas fa-toolbox text-4xl neon-cyan mb-4"></i>
               <h3 class="text-xl font-semibold mb-3">Tools & Automation</h3>
               <div class="text-sm space-y-1">
-                <div>VS Code, IDEs</div>
+                <div>Git, GitHub & GitLab</div>
+                <div>GPT/LLM, n8n & Zapier</div>
                 <div>PowerShell scripting</div>
                 <div>Task automation</div>
-                <div>Git & GitHub</div>
-                <div>System utilities</div>
+                <div>VS Code, IDEs</div>
               </div>
             </div>
           </div>
@@ -640,12 +640,18 @@
       <section id="projects" class="py-12 md:py-20 px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
           <h2
-            class="text-4xl heading-animate font-medium text-center mb-12 neon-yellow"
+            class="text-4xl heading-animate font-medium text-center mb-8 neon-yellow"
           >
             <span class="heading-highlight">Featured Projects</span>
           </h2>
+          <div class="project-filters" role="group" aria-label="Filter projects by category">
+            <button type="button" class="project-filter-btn active" data-filter="all">All</button>
+            <button type="button" class="project-filter-btn" data-filter="ai">AI / ML</button>
+            <button type="button" class="project-filter-btn" data-filter="security">Security &amp; Telemetry</button>
+            <button type="button" class="project-filter-btn" data-filter="automation">Automation &amp; Tools</button>
+          </div>
             <div class="grid grid-cols-2 gap-3 md:gap-8">
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="security">
               <div class="project-icon-container sync-telemetry">
                 <div class="sync-radar">
                   <div class="sync-ring sync-ring-1"></div>
@@ -663,7 +669,7 @@
                 Sync: Autonomous Mobile Telemetry &amp; Silent Fleet Intelligence System
               </h3>
               <p class="text-xs md:text-sm mb-4 line-clamp-3">
-                Complete, self-hosted Android telemetry &amp; zero-touch remote control tool system. Intercept real-time GPS, chats, 2-sided calls, live screen, camera, file vaults and many more in pure silence. Just install the app in target, allow permissions, one min server setup and ready to dominate. Own the device like it never left your hands.
+                Self-hosted Android telemetry and remote fleet management system supporting real-time GPS tracking, communication logs, live screen and camera diagnostics, and secure file sync—built for authorized Mobile Device Management (MDM) and zero-touch server deployment.
               </p>
               <div class="flex space-x-4 mt-auto">
                 <a
@@ -675,7 +681,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="ai security">
               <div class="project-icon-container faceshield">
                 <div class="cyber-shield">
                   <div class="shield-hexagon"></div>
@@ -704,7 +710,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="ai">
               <div class="project-icon-container resume-screener">
                 <div class="ai-resume">
                   <div class="doc-outline">
@@ -737,7 +743,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="automation">
               <div class="project-icon-container reddit-scraper">
                 <div class="reddit-icon">
                   <div class="reddit-antenna"></div>
@@ -769,7 +775,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="automation">
               <div class="project-icon-container whatsapp-automation">
                 <div class="wa-scene">
                   <div class="wa-bubble">
@@ -798,7 +804,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d card-glow group flex flex-col" style="--glow-x:50%;--glow-y:50%">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d card-glow group flex flex-col" style="--glow-x:50%;--glow-y:50%" data-category="ai">
               <div class="project-icon-container med-assist">
                 <div class="medical-cross">
                   <div class="cross-horizontal"></div>
@@ -820,7 +826,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="automation">
               <div class="project-icon-container hyper-qr">
                 <div class="qr-frame">
                   <div class="qr-pattern"></div>
@@ -851,7 +857,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="security ai">
               <div class="project-icon-container smart-vault">
                 <div class="vault-safe">
                   <div class="vault-door"></div>
@@ -876,7 +882,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="ai">
               <div class="project-icon-container gesture-calculator">
                 <div class="hand-gesture">
                   <div class="palm"></div>
@@ -905,7 +911,7 @@
               </div>
             </div>
 
-            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col">
+            <div class="card rounded-xl p-3 md:p-6 h-full card-3d group flex flex-col" data-category="ai">
               <div class="project-icon-container emotion-detection">
                 <div class="emotion-face">
                   <div class="face-outline"></div>
@@ -961,7 +967,7 @@
                   Engineering
                 </h3>
                 <div class="text-purple-400 mb-2">
-                  National College Of Engineering (T.U) •••2024 - Present
+                  National College Of Engineering (T.U) • 2024 - Present
                 </div>
                 <p class="text-sm">
                   Currently pursuing engineering degree with focus on
@@ -1008,14 +1014,16 @@
                 <div class="text-cyan-400 mb-2">Multiple Achievements</div>
                 <div class="text-sm space-y-2">
                   <div>
-                    • Merit-Based Scholarship - Liverpool International College
+                    • Startup Hackathon 2025 ("AI for Social Impact and Scale") - The Startup Network, Embark College &amp; PHDCCI
                   </div>
                   <div>
                     • Full Merit Scholarship - National College Of Engineering
                   </div>
                   <div>
-                    • Certificate of Participation - Multiple Hackathons &
-                    Workshops
+                    • Merit-Based Scholarship - Liverpool International College
+                  </div>
+                  <div>
+                    • Cloud Computing &amp; Python Programming Trainings - NCE
                   </div>
                 </div>
               </div>
@@ -1121,7 +1129,7 @@
                 <h3 class="contact-label">Location</h3>
                 <a
                   href="https://www.google.com/maps/place/National+College+Of+Engineering/@27.655790327766975,85.31767720956154,17z/data=!3m1!4b1!4m6!3m5!1s0x39eb177db2f5b88d:0xa7de95ca9dd9ad6c!8m2!3d27.6557903!4d85.3202521!16s%2Fg%2F11c5d4n7wf"
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   class="contact-value seo-contact-link"
                 >
@@ -1139,7 +1147,7 @@
                 <h3 class="contact-label">Website</h3>
                 <a
                   href="https://sarshijkarn.com.np"
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   class="contact-value contact-link"
                 >
@@ -1167,7 +1175,7 @@
                 ><i class="fab fa-github"></i></a
               ><a
                 href="https://www.linkedin.com/in/sarshij-karn-1a7766236/"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 class="orbital-icon"
                 data-orbit="1"
@@ -1175,7 +1183,7 @@
                 ><i class="fab fa-linkedin"></i></a
               ><a
                 href="https://x.com/realsarshijkarn"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 class="orbital-icon"
                 data-orbit="2"
@@ -1183,7 +1191,7 @@
                 ><i class="fab fa-twitter"></i></a
               ><a
                 href="https://www.instagram.com/sarshijkarn"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 class="orbital-icon"
                 data-orbit="3"
@@ -1191,7 +1199,7 @@
                 ><i class="fab fa-instagram"></i></a
               ><a
                 href="https://youtube.com/@sarshijkarn"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 class="orbital-icon"
                 data-orbit="4"
@@ -1249,7 +1257,6 @@
                     id="terminalInput"
                     class="terminal-input"
                     placeholder="Type command..."
-                    autofocus
                     aria-label="Terminal command input"
                   />
                 </div>

@@ -756,3 +756,37 @@
   font-size: 16px;
   box-shadow: 0 4px 15px rgb(255 214 0 / 0.6);
 }
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-bottom: 2rem;
+}
+.project-filter-btn {
+  padding: 0.45rem 1.05rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #cbd5e1;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(0, 206, 209, 0.25);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.project-filter-btn:hover {
+  color: #fff;
+  border-color: rgba(0, 206, 209, 0.7);
+  box-shadow: 0 0 14px rgba(0, 206, 209, 0.25);
+}
+.project-filter-btn.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(138, 43, 226, 0.75), rgba(0, 206, 209, 0.75));
+  border-color: #00ced1;
+  box-shadow: 0 0 18px rgba(0, 206, 209, 0.35);
+}
+.project-card-hidden {
+  display: none !important;
+}

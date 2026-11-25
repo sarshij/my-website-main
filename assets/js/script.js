@@ -929,9 +929,29 @@ function initPerformanceObserver() {
   animatedElements.forEach(el => observer.observe(el));
 }
 
+function initProjectFilters() {
+  const buttons = document.querySelectorAll('.project-filter-btn');
+  const cards = document.querySelectorAll('#projects .card[data-category]');
+  if (!buttons.length || !cards.length) return;
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter || 'all';
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+
+      cards.forEach(card => {
+        const categories = (card.dataset.category || '').split(/\s+/);
+        const matches = filter === 'all' || categories.includes(filter);
+        card.classList.toggle('project-card-hidden', !matches);
+      });
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initTerminalMode();
   initPerformanceObserver();
+  initProjectFilters();
 });
 
 // Companion character replaced by AI Chatbot (smartbot.js)
