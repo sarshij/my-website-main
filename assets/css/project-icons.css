@@ -380,6 +380,12 @@
   .qr-frame {
     transform: scale(0.7);
   }
+  .sync-radar {
+    transform: scale(0.7);
+  }
+  .wa-scene {
+    transform: scale(0.7);
+  }
   .calculator-display {
     font-size: 14px;
     padding: 4px 8px;
@@ -623,4 +629,130 @@
   height: 100%;
   background: linear-gradient(90deg, transparent, #fff, transparent);
   animation: none;
+}
+.sync-telemetry {
+  background: linear-gradient(135deg, #091e2c 0%, #1a0b2e 100%);
+}
+.sync-radar {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sync-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgb(0 206 209 / 0.35);
+}
+.sync-ring-1 {
+  width: 92px;
+  height: 92px;
+}
+.sync-ring-2 {
+  width: 118px;
+  height: 118px;
+  border-color: rgb(138 43 226 / 0.35);
+  border-style: dashed;
+}
+.sync-phone {
+  position: relative;
+  width: 48px;
+  height: 82px;
+  background: linear-gradient(145deg, #1b2838, #0f172a);
+  border: 2.5px solid #00ced1;
+  border-radius: 10px;
+  padding: 6px 4px 4px;
+  box-shadow: 0 0 20px rgb(0 206 209 / 0.45);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sync-notch {
+  width: 16px;
+  height: 3px;
+  background: #00ced1;
+  border-radius: 2px;
+  margin-bottom: 5px;
+}
+.sync-screen {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  background: rgb(0 206 209 / 0.08);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sync-signal-bar {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ced1, transparent);
+  top: 50%;
+}
+.sync-gps-dot {
+  width: 12px;
+  height: 12px;
+  background: #00ff9d;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #00ff9d, 0 0 0 5px rgb(0 255 157 / 0.25);
+}
+.whatsapp-automation {
+  background: linear-gradient(135deg, #075e54 0%, #25d366 100%);
+}
+.wa-scene {
+  position: relative;
+  width: 115px;
+  height: 105px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wa-bubble {
+  position: relative;
+  width: 96px;
+  height: 76px;
+  background: #fff;
+  border-radius: 20px 20px 20px 4px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 25px rgb(0 0 0 / 0.25);
+}
+.wa-line {
+  height: 7px;
+  border-radius: 4px;
+  background: #25d366;
+}
+.wa-line-1 {
+  width: 100%;
+}
+.wa-line-2 {
+  width: 78%;
+  background: #128c7e;
+}
+.wa-line-3 {
+  width: 56%;
+  background: #25d366;
+}
+.wa-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  background: #ffd600;
+  color: #075e54;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgb(255 214 0 / 0.6);
 }

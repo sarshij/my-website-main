@@ -37,20 +37,26 @@ class ProjectLightbox {
       if (desc.toLowerCase().includes('tensorflow') || desc.toLowerCase().includes('keras')) techTags.push('TensorFlow');
       if (desc.toLowerCase().includes('opencv')) techTags.push('OpenCV');
       if (desc.toLowerCase().includes('mediapipe')) techTags.push('MediaPipe');
+      if (desc.toLowerCase().includes('deepsort')) techTags.push('DeepSORT');
+      if (desc.toLowerCase().includes('sbert')) techTags.push('SBERT');
+      if (desc.toLowerCase().includes('gemini')) techTags.push('Google Gemini');
+      if (desc.toLowerCase().includes('android')) techTags.push('Android');
       if (desc.toLowerCase().includes('ai') || desc.toLowerCase().includes('machine learning')) techTags.push('AI/ML');
       if (desc.toLowerCase().includes('javascript') || desc.toLowerCase().includes('js')) techTags.push('JavaScript');
       if (desc.toLowerCase().includes('tkinter')) techTags.push('Tkinter');
       if (desc.toLowerCase().includes('vite')) techTags.push('Vite');
 
       // Auto-detect tags from title too
+      if (title.toLowerCase().includes('sync')) techTags.push('Android', 'Telemetry', 'Security');
+      if (title.toLowerCase().includes('faceshield')) techTags.push('MediaPipe', 'DeepSORT', 'Computer Vision');
+      if (title.toLowerCase().includes('clearhire')) techTags.push('SBERT', 'AI/ML', 'ATS');
+      if (title.toLowerCase().includes('whatsapp')) techTags.push('Python', 'CustomTkinter', 'Automation');
       if (title.toLowerCase().includes('medassist')) techTags.push('Healthcare', 'AI');
       if (title.toLowerCase().includes('reddit')) techTags.push('Data Scraping', 'Python');
       if (title.toLowerCase().includes('qr')) techTags.push('QR Code', 'Utility');
       if (title.toLowerCase().includes('smartvault') || title.toLowerCase().includes('vault')) techTags.push('Security', 'React', 'TypeScript');
       if (title.toLowerCase().includes('emotion')) techTags.push('Deep Learning', 'Computer Vision');
       if (title.toLowerCase().includes('gesture')) techTags.push('Computer Vision', 'Python');
-      if (title.toLowerCase().includes('unsubscriber')) techTags.push('YouTube API', 'OAuth');
-      if (title.toLowerCase().includes('downloader')) techTags.push('YouTube API', 'Python');
 
       if (techTags.length === 0) techTags.push('Full-Stack', 'Innovation');
 
@@ -275,6 +281,11 @@ class ProjectLightbox {
     this.title.textContent = project.title;
     this.desc.textContent = project.description;
     this.github.href = project.github;
+    if (project.github.includes('lnkd.in') || project.github.includes('linkedin.com')) {
+      this.github.innerHTML = '<i class="fab fa-linkedin"></i> View on LinkedIn';
+    } else {
+      this.github.innerHTML = '<i class="fab fa-github"></i> View on GitHub';
+    }
 
     this.tags.innerHTML = project.techTags.map(t =>
       `<span>${t}</span>`
