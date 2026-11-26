@@ -1,0 +1,292 @@
+/* ==========================================================
+   skeleton-loader.css — Boneyard-style cyber skeleton UI
+   Provides shimmer bone primitives, image/widget skeleton
+   transitions, and reusable async-fetch skeleton states.
+   ========================================================== */
+
+:root {
+  --sk-base: rgba(20, 22, 38, 0.78);
+  --sk-surface: rgba(13, 14, 24, 0.92);
+  --sk-border: rgba(138, 43, 226, 0.16);
+  --sk-highlight-purple: rgba(138, 43, 226, 0.22);
+  --sk-highlight-cyan: rgba(0, 206, 209, 0.16);
+}
+
+/* ─── Base Bone Primitives ─── */
+.sk-bone {
+  position: relative;
+  overflow: hidden;
+  background: var(--sk-base);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+}
+
+.sk-bone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--sk-highlight-purple) 38%,
+    var(--sk-highlight-cyan) 54%,
+    transparent 100%
+  );
+  animation: sk-shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  will-change: transform;
+}
+
+.sk-circle {
+  border-radius: 9999px;
+}
+
+.sk-pill {
+  border-radius: 9999px;
+}
+
+.sk-line {
+  height: 14px;
+  border-radius: 8px;
+}
+
+.sk-line-lg {
+  height: 28px;
+  border-radius: 10px;
+}
+
+.sk-card {
+  background: rgba(15, 17, 30, 0.65);
+  border: 1px solid var(--sk-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+@keyframes sk-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ─── Initial Page Skeleton Overlay ─── */
+.site-skeleton {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  background: #05050a;
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.site-skeleton.is-hiding {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.site-skeleton-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  height: 100vh;
+  background: rgba(13, 16, 30, 0.94);
+  border-right: 1px solid rgba(0, 206, 209, 0.14);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-skeleton-nav {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.site-skeleton-main {
+  position: relative;
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.site-skeleton-hero-left {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 28vh 4rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  height: 100%;
+}
+
+.site-skeleton-hero-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  opacity: 0.55;
+}
+
+.site-skeleton-socials {
+  display: flex;
+  gap: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.site-skeleton-mobile-bar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .site-skeleton-sidebar {
+    display: none;
+  }
+
+  .site-skeleton-mobile-bar {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .site-skeleton-hero-right {
+    width: 100%;
+    opacity: 0.4;
+  }
+
+  .site-skeleton-hero-left {
+    justify-content: flex-end;
+    padding: 0 1.5rem 15vh;
+  }
+}
+
+/* ─── Image & Media Skeleton Safety ─── */
+.skeleton {
+  position: relative;
+}
+
+.skeleton img {
+  opacity: 0;
+  transition: opacity 0.35s ease-in-out;
+}
+
+.skeleton img.loaded,
+.skeleton.loaded img,
+.skeleton.skeleton-error img {
+  opacity: 1;
+}
+
+.skeleton.loaded,
+.skeleton.skeleton-error {
+  animation: none !important;
+  background: none !important;
+}
+
+.sidebar-avatar-wrapper.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(20, 20, 35, 0.6) 25%,
+    rgba(138, 43, 226, 0.2) 50%,
+    rgba(20, 20, 35, 0.6) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+/* ─── Turnstile Widget Skeleton ─── */
+.turnstile-skeleton-wrap {
+  position: relative;
+  min-width: 300px;
+  min-height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.turnstile-skeleton-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  background: rgba(15, 18, 32, 0.78);
+  border: 1px solid rgba(0, 206, 209, 0.22);
+  border-radius: 8px;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+}
+
+.turnstile-skeleton-wrap.is-ready .turnstile-skeleton-placeholder {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ─── SmartBot FAB Skeleton ─── */
+.smartbot-fab.is-loading {
+  width: 96px;
+  height: 140px;
+  background: rgba(18, 20, 36, 0.85);
+  border: 1px solid rgba(0, 206, 209, 0.2);
+}
+
+.smartbot-fab.is-loading .smartbot-fab-img {
+  opacity: 0;
+}
+
+/* ─── Reusable Data-Fetch Skeleton Container ─── */
+.sk-fetch-overlay {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+}
+
+.sk-fetch-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sk-fetch-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 768px) {
+  .sk-fetch-grid-2,
+  .sk-fetch-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Reduced Motion Support ─── */
+@media (prefers-reduced-motion: reduce) {
+  .sk-bone::after {
+    animation: none !important;
+    transform: none !important;
+  }
+  .site-skeleton {
+    transition: opacity 0.15s ease;
+  }
+}

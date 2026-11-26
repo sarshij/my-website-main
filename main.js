@@ -3,8 +3,12 @@ import './assets/css/style.css';
 import './assets/css/glassmorphism.css';
 import './assets/css/project-icons.css';
 import './assets/css/luxury-effects.css';
-import './assets/css/loading-screen.css';
+import './assets/css/skeleton-loader.css';
 import './assets/css/smartbot.css';
+import './assets/css/light-mode.css';
+
+// Skeleton controller — manages initial page reveal & media/fetch skeletons
+import './assets/js/skeleton-loader.js';
 
 // Core Site Interactions (critical — loaded immediately)
 import './assets/js/script.js';
@@ -17,9 +21,6 @@ import './assets/js/smartbot.js';
 
 // Defer non-critical JS to after first paint to improve FCP/LCP
 window.addEventListener('load', () => {
-  // Loading screen controller — only needed during the first ~2s splash
-  import('./assets/js/loading-screen.js');
-
   // Project lightbox — only activates on card click, no need to block initial load
   import('./assets/js/project-lightbox.js');
 });

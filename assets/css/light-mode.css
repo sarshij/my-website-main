@@ -1,0 +1,347 @@
+/* ==========================================================
+   LIGHT MODE — Full-site theme overrides
+   Scoped entirely to body.light so dark mode is never touched.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   1. BODY & PAGE BACKGROUND
+   Override the dark bg.webp + !important from style.css
+   ---------------------------------------------------------- */
+body.light {
+  background: #f0f4f8 !important;
+  background-image: none !important;
+  color: #1a1a2e !important;
+  color-scheme: light;
+}
+
+/* Keep html neutral so the browser chrome (scrollbars) adapts */
+html:has(body.light) {
+  color-scheme: light;
+}
+
+/* ----------------------------------------------------------
+   2. NOISE / SCANLINES / THREE.JS CANVAS
+   These look jarring on a light bg — fade them out
+   ---------------------------------------------------------- */
+body.light .noise-overlay,
+body.light .scanlines {
+  opacity: 0;
+}
+
+body.light #webgl-canvas,
+body.light canvas {
+  opacity: 0.08;
+}
+
+/* ----------------------------------------------------------
+   3. MAIN CONTENT — SECTIONS & HEADINGS
+   ---------------------------------------------------------- */
+body.light section,
+body.light main {
+  background: transparent;
+  color: #1a1a2e;
+}
+
+body.light h1,
+body.light h2,
+body.light h3,
+body.light h4,
+body.light h5,
+body.light h6 {
+  color: #1a1a2e;
+}
+
+body.light p,
+body.light span,
+body.light li,
+body.light label {
+  color: #2d2d4e;
+}
+
+/* Tailwind text-gray-* overrides */
+body.light .text-gray-400,
+body.light .text-gray-300,
+body.light .text-gray-200 {
+  color: #555577 !important;
+}
+body.light .text-white {
+  color: #1a1a2e !important;
+}
+
+/* ----------------------------------------------------------
+   4. HERO SECTION
+   ---------------------------------------------------------- */
+body.light .hero-title,
+body.light #hero h1 {
+  color: #1a1a2e;
+  text-shadow: none;
+}
+
+body.light #hero .text-gray-400,
+body.light #hero p {
+  color: #444466 !important;
+}
+
+/* Keep the gradient brand name readable */
+body.light .brand-gradient {
+  background: linear-gradient(to right, #6a1bc2, #0097a7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ----------------------------------------------------------
+   5. NEON TEXT — reduce glow so it's readable on light bg
+   ---------------------------------------------------------- */
+body.light .neon-cyan {
+  color: #0097a7 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+body.light .neon-purple {
+  color: #7b1fa2 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+body.light .neon-yellow {
+  color: #e65100 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+body.light .glow-special,
+body.light .glow-text {
+  color: #c62828 !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* ----------------------------------------------------------
+   6. CARDS (all variants)
+   ---------------------------------------------------------- */
+body.light .card,
+body.light .card-3d,
+body.light .terminal-card,
+body.light .magnetic-card,
+body.light .magnetic-card-inner,
+body.light .skill-card,
+body.light .hobby-card,
+body.light .stat-card,
+body.light .timeline-item .card,
+body.light .contact-form-card {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.light .card p,
+body.light .card span,
+body.light .card li,
+body.light .skill-card p,
+body.light .skill-card span,
+body.light .hobby-card p,
+body.light .hobby-card span,
+body.light .stat-card p,
+body.light .stat-card span {
+  color: #2d2d4e !important;
+}
+
+/* Glass/glassmorphism cards */
+body.light .glass,
+body.light .glass-card,
+body.light [class*="glass"] {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ----------------------------------------------------------
+   7. TIMELINE
+   ---------------------------------------------------------- */
+body.light .timeline-item {
+  color: #1a1a2e;
+}
+body.light .timeline-connector,
+body.light .timeline-line {
+  background: rgba(138, 43, 226, 0.3);
+}
+
+/* ----------------------------------------------------------
+   8. ABOUT SECTION — stat numbers, labels
+   ---------------------------------------------------------- */
+body.light .stat-card .stat-number,
+body.light .stat-card [class*="number"],
+body.light .stat-card [class*="count"] {
+  color: #7b1fa2 !important;
+}
+body.light .stat-card .stat-label,
+body.light .stat-card [class*="label"] {
+  color: #444466 !important;
+}
+
+/* ----------------------------------------------------------
+   9. SKILLS SECTION
+   ---------------------------------------------------------- */
+body.light .skill-category-title,
+body.light .skill-label {
+  color: #1a1a2e !important;
+}
+body.light .skill-bar-track {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ----------------------------------------------------------
+   10. PROJECT CARDS
+   ---------------------------------------------------------- */
+body.light .project-card,
+body.light .project-icon-container {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: #1a1a2e !important;
+}
+body.light .project-card h3,
+body.light .project-card p {
+  color: #1a1a2e !important;
+}
+body.light .project-tags span,
+body.light .tech-tag,
+body.light .tag {
+  background: rgba(138, 43, 226, 0.12) !important;
+  color: #7b1fa2 !important;
+  border-color: rgba(138, 43, 226, 0.25) !important;
+}
+
+/* ----------------------------------------------------------
+   11. CONTACT SECTION
+   ---------------------------------------------------------- */
+body.light .contact-info-item,
+body.light .contact-link {
+  color: #2d2d4e !important;
+}
+body.light input,
+body.light textarea,
+body.light select {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1a1a2e !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+body.light input::placeholder,
+body.light textarea::placeholder {
+  color: #9999aa !important;
+}
+
+/* ----------------------------------------------------------
+   12. FOOTER
+   ---------------------------------------------------------- */
+body.light footer {
+  background: rgba(240, 244, 248, 0.95) !important;
+  color: #2d2d4e !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+body.light footer p,
+body.light footer span,
+body.light footer a {
+  color: #555577 !important;
+}
+body.light footer .social-footer-row a {
+  color: #555577 !important;
+  border-color: rgba(138, 43, 226, 0.25) !important;
+}
+body.light footer .social-footer-row a:hover {
+  color: #7b1fa2 !important;
+  background: rgba(138, 43, 226, 0.1) !important;
+  border-color: rgba(138, 43, 226, 0.5) !important;
+}
+
+/* ----------------------------------------------------------
+   13. SMARTBOT / FAB BUTTON
+   ---------------------------------------------------------- */
+body.light .smartbot-bubble,
+body.light .smartbot-window {
+  background: rgba(245, 245, 255, 0.97) !important;
+  border-color: rgba(138, 43, 226, 0.25) !important;
+  color: #1a1a2e !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+body.light .smartbot-bubble .msg-text,
+body.light .smartbot-window .msg-text,
+body.light .chat-message,
+body.light .bot-message {
+  color: #1a1a2e !important;
+}
+body.light .user-message {
+  background: rgba(138, 43, 226, 0.12) !important;
+  color: #1a1a2e !important;
+}
+body.light .smartbot-input,
+body.light .chat-input {
+  background: rgba(0, 0, 0, 0.05) !important;
+  color: #1a1a2e !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+body.light .smartbot-input::placeholder,
+body.light .chat-input::placeholder {
+  color: #9999aa !important;
+}
+body.light .smartbot-header,
+body.light .chat-header {
+  background: rgba(240, 240, 255, 0.98) !important;
+  color: #1a1a2e !important;
+  border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ----------------------------------------------------------
+   14. SCROLL PROGRESS BAR — keep as-is (gradient works)
+   RESUME BUTTON — stays gradient
+   ---------------------------------------------------------- */
+
+/* ----------------------------------------------------------
+   15. LUXURY GLASS (luxury-effects.css)
+   ---------------------------------------------------------- */
+body.light .glass-luxury {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+body.light .glass-luxury::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.1)
+  ) !important;
+}
+
+/* ----------------------------------------------------------
+   16. MOBILE OVERRIDES
+   Override the !important mobile dark backgrounds
+   ---------------------------------------------------------- */
+@media (max-width: 768px) {
+  body.light .card,
+  body.light .card-3d,
+  body.light .contact-form-card,
+  body.light .magnetic-card,
+  body.light .skill-card,
+  body.light .hobby-card,
+  body.light .stat-card,
+  body.light .project-card {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    color: #1a1a2e !important;
+  }
+}
+
+/* ----------------------------------------------------------
+   17. TRANSITION — smooth theme switch
+   ---------------------------------------------------------- */
+body,
+body * {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+/* But don't slow down animations already running */
+body.light canvas,
+body.light .noise-overlay,
+body.light .scanlines {
+  transition: opacity 0.4s ease;
+}

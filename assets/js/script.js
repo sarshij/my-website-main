@@ -54,12 +54,25 @@ if (themeToggle) {
     if (isDark) {
       body.classList.add("dark");
       body.classList.remove("light");
+      document.documentElement.style.colorScheme = "dark";
+      localStorage.setItem("theme", "dark");
     } else {
       body.classList.remove("dark");
       body.classList.add("light");
+      document.documentElement.style.colorScheme = "light";
+      localStorage.setItem("theme", "light");
     }
     themeToggle.classList.toggle("active");
   });
+  // Restore saved theme on load
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "light") {
+    isDark = false;
+    body.classList.remove("dark");
+    body.classList.add("light");
+    document.documentElement.style.colorScheme = "light";
+    themeToggle.classList.add("active");
+  }
 }
 // Smooth anchor navigation — native scrollIntoView on all devices.
 // No JS scroll engine needed; CSS scroll-behavior: smooth handles the easing.
@@ -284,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnText.textContent = "TRANSMIT MESSAGE";
   }
   // Particle effects removed - using static background image instead
-  gsap.from("body", { opacity: 0, duration: 0.8, ease: "power2.out" });
 });
 let ticking = !1;
 function updateScrollEffects() {
@@ -956,7 +968,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Companion character replaced by AI Chatbot (smartbot.js)
 
-// Skeleton Loader Logic
+// Skeleton Loader Logic (lazy data-src + resilient fallback for .skeleton images)
 document.addEventListener('DOMContentLoaded', () => {
   if ('IntersectionObserver' in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -975,16 +987,19 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('img[loading="lazy"]').forEach(img => imageObserver.observe(img));
   }
 
-  // Existing skeleton logic fallbacks
   document.querySelectorAll('.skeleton img').forEach(img => {
-    if (img.complete) {
-      img.parentElement.classList.add('loaded');
+    const reveal = () => {
+      img.parentElement?.classList.add('loaded');
       img.classList.add('loaded');
+    };
+    if (img.complete && img.naturalWidth > 0) {
+      reveal();
     } else {
-      img.onload = () => {
-        img.parentElement.classList.add('loaded');
+      img.addEventListener('load', reveal, { once: true });
+      img.addEventListener('error', () => {
+        img.parentElement?.classList.add('skeleton-error');
         img.classList.add('loaded');
-      };
+      }, { once: true });
     }
   });
 });

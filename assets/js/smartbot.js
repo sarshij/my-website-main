@@ -147,13 +147,25 @@ class SmartBot {
             </button>
           </div>
         </div>
-        <div class="smartbot-fab" id="smartbotFab">
+        <div class="smartbot-fab is-loading sk-bone" id="smartbotFab">
           <img src="${athenaImg}" alt="AURA Chatbot" class="smartbot-fab-img" width="565" height="997">
           <span class="smartbot-fab-badge">AI</span>
         </div>
       </div>
     `;
     document.body.appendChild(div.firstElementChild);
+
+    const fab = document.getElementById('smartbotFab');
+    const fabImg = fab?.querySelector('.smartbot-fab-img');
+    if (fab && fabImg) {
+      const revealFab = () => fab.classList.remove('is-loading', 'sk-bone');
+      if (fabImg.complete && fabImg.naturalWidth > 0) {
+        revealFab();
+      } else {
+        fabImg.addEventListener('load', revealFab, { once: true });
+        fabImg.addEventListener('error', revealFab, { once: true });
+      }
+    }
   }
 
   cacheElements() {
